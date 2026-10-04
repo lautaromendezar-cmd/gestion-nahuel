@@ -1,0 +1,10 @@
+{
+  "name": "gestion-nahuel",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/functions": "^3.9.11"
+  }
+}
