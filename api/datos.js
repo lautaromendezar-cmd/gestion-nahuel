@@ -2,7 +2,7 @@
 // funciona entera con una sola lectura).
 
 import { TIPOS, listar, crear, actualizar, borrar, guardarPorClave } from '../lib/db.mjs';
-import { FRENTES, CUENTAS, ESTADOS_CONTACTO } from '../lib/reporte.mjs';
+import { FRENTES, MARCAS, CALENDARIO, REDES, EJES, UGC_MES, CUENTAS_RED, CUENTAS_COMPETENCIA, ESTADOS_CONTACTO } from '../lib/reporte.mjs';
 import { iaDisponible } from '../lib/ia.mjs';
 import { cuerpo, sinSesion, fallo } from '../lib/http.mjs';
 
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const registros = await listar(TIPOS);
-      return res.status(200).json({ registros, frentes: FRENTES, cuentas: CUENTAS, estadosContacto: ESTADOS_CONTACTO, ia: iaDisponible() });
+      return res.status(200).json({ registros, meta: { frentes: FRENTES, marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: UGC_MES, cuentasRed: CUENTAS_RED, cuentasCompetencia: CUENTAS_COMPETENCIA, estadosContacto: ESTADOS_CONTACTO }, ia: iaDisponible() });
     }
     const b = cuerpo(req);
     if (req.method === 'POST') {

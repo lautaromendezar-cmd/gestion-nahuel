@@ -4,11 +4,11 @@
 // —las consultas a Claude— sigue en segundo plano con waitUntil.
 
 import { waitUntil } from '@vercel/functions';
-import { TIPOS, listar, crear } from '../lib/db.mjs';
+import { TIPOS, listar, crear, guardarPorClave } from '../lib/db.mjs';
 import { enviar } from '../lib/telegram.mjs';
-import { FRENTES, planSemana, reporteSemana, aTelegram, aWhatsApp } from '../lib/reporte.mjs';
+import { FRENTES, planSemana, aTelegram } from '../lib/reporte.mjs';
 import { iaDisponible, preguntar, generarIdeas } from '../lib/ia.mjs';
-import { hoyAR, lunesDe } from '../lib/fechas.mjs';
+import { hoyAR, lunesDe, iso } from '../lib/fechas.mjs';
 import { cuerpo } from '../lib/http.mjs';
 
 export const config = { maxDuration: 300 };
@@ -21,9 +21,12 @@ Cualquier cosa que me escribas o me reenvíes queda en la <b>bandeja</b> del pan
 /tarea texto · tarea nueva (frente General)
 /pendientes · tareas abiertas y lo que espera a Nahuel
 /semana · el plan de esta semana
-/reporte · el reporte de la semana, listo para reenviar
+/reporte · link a la hoja del reporte (PDF)
 /p pregunta · le pregunto a Claude (busca en la web)
-/ideas foco · 5 ideas nuevas de contenido`;
+/ideas foco · 5 ideas nuevas de contenido
+/seg igc 8120 fbc 3400 igl 12000 fbl 900 ttl 310 iga 520 · cargar seguidores (podés mandar sólo algunas)`;
+
+const ALIAS = { igc: 'ig-centenaria', fbc: 'fb-centenaria', igl: 'ig-latina', fbl: 'fb-latina', ttl: 'tt-latina', iga: 'ig-cente-azul' };
 
 const escHtml = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
@@ -72,6 +75,20 @@ async function atender(m, chat) {
     await crear('tarea', { frente: 'general', texto: arg, estado: 'pendiente', deNahuel: false, hechoEn: null });
     return enviar('Tarea anotada en General.', { chat });
   }
+  if (cmd === '/seg') {
+    const partes = arg.toLowerCase().split(/s+/);
+    const fecha = iso(hoyAR());
+    const cargadas = [];
+    for (let i = 0; i < partes.length - 1; i += 2) {
+      const cuenta = ALIAS[partes[i]];
+      const n = Number(String(partes[i + 1]).replace(/[.,]/g, '').replace(/k$/, '000'));
+      if (!cuenta || !Number.isFinite(n)) continue;
+      await guardarPorClave('metrica', 'clave', `${cuenta}_${fecha}`, { cuenta, fecha, seguidores: n });
+      cargadas.push(`${partes[i]} ${n.toLocaleString('es-AR')}`);
+    }
+    if (!cargadas.length) return enviar('Formato: /seg igc 8120 igl 12000 …\nigc/fbc = Centenaria, igl/fbl/ttl = LaTiNa, iga = Cente Azul.', { chat });
+    return enviar(`Seguidores de hoy guardados: ${cargadas.join(' · ')}`, { chat });
+  }
   if (cmd === '/pendientes') {
     const regs = await listar(['tarea']);
     const abiertas = regs.filter((t) => t.estado !== 'hecho');
@@ -89,9 +106,10 @@ async function atender(m, chat) {
     return enviar(aTelegram(planSemana(regs, lunesDe(hoyAR()))), { chat });
   }
   if (cmd === '/reporte') {
-    const regs = await listar(TIPOS);
-    // En texto plano: los asteriscos son el formato de WhatsApp, para reenviar tal cual.
-    return enviar(aWhatsApp(reporteSemana(regs, lunesDe(hoyAR()))), { chat, html: false });
+    return enviar(`<b>Reporte de la semana</b>
+https://gestion-nahuel.vercel.app/reporte.html
+
+Abrilo, revisalo y tocá «Descargar PDF» para mandárselo a Nahuel. Si es fin de mes, pasalo a «Mes».`, { chat });
   }
   if (cmd === '/p' || cmd === '/ideas') {
     if (!iaDisponible()) return enviar('Falta cargar ANTHROPIC_API_KEY en Vercel.', { chat });

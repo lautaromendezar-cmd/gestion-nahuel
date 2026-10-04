@@ -14,7 +14,7 @@ import { listar, crear, guardarPorClave } from '../lib/db.mjs';
 const args = process.argv.slice(2);
 const todo = args.length === 0;
 
-const ORDEN = { 'latina-marca': 1, 'centenaria-marca': 2, 'mate-101': 10, 'padron-uruguayo': 11, 'mercado': 12, 'ideas-de-contenido': 20, 'influencers-canje': 21, 'competencia-resumen': 30 };
+const ORDEN = { 'plan-de-accion': 0, 'latina-marca': 1, 'centenaria-marca': 2, 'mate-101': 10, 'padron-uruguayo': 11, 'mercado': 12, 'ideas-de-contenido': 20, 'influencers-canje': 21, 'competencia-resumen': 30 };
 
 if (todo || args.includes('--saber')) {
   const dir = fileURLToPath(new URL('../saber/', import.meta.url));
