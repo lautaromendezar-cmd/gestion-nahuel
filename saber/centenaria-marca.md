@@ -21,6 +21,8 @@ Yerba mate de **padrón uruguayo**, elaborada y envasada **en origen en el sur d
 | Envasada en origen | no se corta la cadena | igual paquete a paquete |
 | 1918 | oficio, no receta nueva | la de siempre |
 
+**Ojo con dos frases del copy viejo** (ver «Padrón uruguayo»): «poco polvo» es al revés, porque el padrón uruguayo tiene más polvo que la yerba argentina; y en vez de «verde intenso» conviene «color parejo», porque el estacionado es verde oliva. Falta saber en qué estado o ciudad de Brasil está la planta Seleme: preguntárselo a Nahuel.
+
 La comparación con la yerba argentina común (más palo, molienda más gruesa, más amarga) se puede **insinuar**, pero **nunca nombrando una marca competidora**.
 
 ## Variedades
