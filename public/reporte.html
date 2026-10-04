@@ -41,7 +41,7 @@ body{background:#DDE2DD;color:var(--ink);font:10pt/1.5 var(--font);-webkit-print
 .kpi .v{font-size:19pt;font-weight:800;letter-spacing:-.03em;margin-top:1mm;font-variant-numeric:tabular-nums}
 .kpi .v small{font-size:10pt;color:var(--muted);font-weight:600}
 .kpi .d{font-size:8pt;color:var(--muted)}
-section{display:grid;gap:3mm;break-inside:avoid}
+section{display:grid;gap:3mm;break-inside:avoid;align-content:start}
 h2{margin:0;font-size:12.5pt;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
 h2::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--accent)}
 table{width:100%;border-collapse:collapse;font-size:8.8pt}
@@ -141,11 +141,11 @@ function pintar(d){
     <tr class="tot"><td colspan="3">Total</td><td class="n">${pesos(d.ads.gasto)}</td><td class="n">${fmt(d.ads.consultas)}</td><td class="n">${d.ads.costoConsulta?pesos(d.ads.costoConsulta):'—'}</td><td class="n">${fmt(d.ads.compras)}</td></tr></tbody></table>
     ${d.campanas.length>1?barras(d.campanas.map(c=>({l:corta(c.inicio),v:c.consultas}))):''}`:'<p class="vacio">No hubo campañas en este período.</p>';
   const segRows=d.seguidores.map(s=>{const dl=s.actual!=null&&s.inicio!=null?s.actual-s.inicio:null;return `<tr><td>${mk(s.marca)}</td><td>${esc(s.red)}</td><td class="n"><b>${s.actual!=null?fmt(s.actual):'—'}</b></td><td class="n">${dl!=null?`<span class="delta ${dl>=0?'up':'down'}">${dl>=0?'+':''}${fmt(dl)}</span>`:'<span class="muted">—</span>'}</td><td>${spark(s.serie)}</td></tr>`}).join('');
-  const lista=g=>g.length?g.map(x=>`<div class="grp">${esc(x.frente)}</div><ul class="lista">${x.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`).join(''):'<p class="vacio">Nada en este período.</p>';
+  const lista=g=>g.length?'<div style="display:grid;gap:1.5mm">'+g.map(x=>`<div class="grp">${esc(x.frente)}</div><ul class="lista">${x.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`).join('')+'</div>':'<p class="vacio">Nada en este período.</p>';
   const ugc=d.ugc.length?`<ul class="lista">${d.ugc.map(u=>`<li><span><b>${esc(u.quien)}</b> · ${esc(d.marcas[u.marca]||u.marca)}: ${esc(u.titulo||'reel')} <span class="e ${u.estado==='publicado'?'publicado':''}">${esc(u.estado)}</span></span></li>`).join('')}</ul>`:'<p class="vacio">Sin reels cargados todavía.</p>';
   $('hoja').innerHTML=`
   <header class="cab"><div class="top"><div class="mk"><i>GN</i>LaTiNa · Centenaria</div><span class="lbl">Reporte ${d.tipo==='mes'?'mensual':'semanal'}</span></div>
-    <div><span class="lbl">Gestión de redes, contenido y publicidad</span><h1>Reporte de gestión</h1><div class="per">${esc(d.titulo.charAt(0).toUpperCase()+d.titulo.slice(1))}</div></div><div style="height:9mm"></div></header>
+    <div><span class="lbl">Gestión de redes, contenido y publicidad</span><h1>Reporte de gestión</h1><div class="per">${esc(d.titulo.charAt(0).toUpperCase()+d.titulo.slice(1))}</div></div><div style="height:4mm"></div></header>
   <div class="cuerpo">
     <div class="kpis">
       <div class="kpi"><div class="l">Publicaciones</div><div class="v">${pub}<small> / ${lautaro.length}</small></div><div class="d">Centenaria y LaTiNa${d.publicaciones.some(p=>p.aCargo==='Franco')?' (sin Cente Azul)':''}</div></div>

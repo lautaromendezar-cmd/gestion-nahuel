@@ -44,7 +44,7 @@ button{cursor:pointer}
 .label{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 
 /* esqueleto */
-.app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh}
+.app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh;background:linear-gradient(to right,var(--side) 252px,transparent 252px)}
 .side{background:var(--side);color:var(--side-fg);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:22px 14px;gap:18px;overflow-y:auto}
 .brand{display:flex;gap:11px;align-items:center;padding:0 8px}
 .brand .mk{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2F8A4E,#E9BE00);display:grid;place-items:center;color:#0F2418;font-weight:800;font-size:15px}
@@ -72,7 +72,7 @@ button{cursor:pointer}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .between{justify-content:space-between}
-.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
 .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .g5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
@@ -135,7 +135,7 @@ button.chip{cursor:pointer}
 .lst{list-style:none;margin:0;padding:0;display:grid}
 .lst li{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
 .lst li:first-child{border-top:0}
-.lst .f{font-size:11.5px;font-weight:600;color:var(--muted);min-width:9.5em}
+.lst .fr{font-size:11.5px;font-weight:600;color:var(--muted);min-width:9.5em;flex:none}
 
 /* calendario */
 .dia{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
@@ -147,6 +147,7 @@ button.chip{cursor:pointer}
 .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--sunk)}
 .seg button{flex:1;border:0;background:transparent;padding:5px 4px;font-size:11.5px;font-weight:600;color:var(--muted)}
 .seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg.est{display:grid;grid-template-columns:1fr 1fr}
 .seg.est button.on{background:var(--accent);color:#fff}
 .dia textarea.f{font-size:13px;min-height:62px}
 .redes{display:flex;gap:6px;flex-wrap:wrap}
@@ -244,7 +245,7 @@ tr.nuevo td{background:#FAFBFA}
   .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .span2{grid-column:auto}
   .doclist{position:static;grid-auto-flow:column;overflow-x:auto}
-  .lst .f{min-width:0}
+  .lst .fr{min-width:0}
   .lst li{flex-wrap:wrap;gap:2px 10px}
 }
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
@@ -351,7 +352,7 @@ function niceTicks(mn,mx,n=4){const span=mx-mn||Math.max(1,Math.abs(mx));const s
 const corto=n=>Math.abs(n)>=1000?(n/1000).toLocaleString('es-AR',{maximumFractionDigits:1})+' mil':fmt(n);
 function lineChart(puntos,{alto=220,etiqueta='seguidores'}={}){
   if(puntos.length<2)return `<p class="empty">Hacen falta al menos dos cargas para dibujar la evolución.</p>`;
-  const W=640,H=alto,L=58,R=16,T=14,B=28;
+  const W=1000,H=alto*1.3,L=64,R=16,T=14,B=28;
   const ys=puntos.map(p=>p.y);const ticks=niceTicks(Math.min(...ys),Math.max(...ys));
   const y0=ticks[0],y1=ticks[ticks.length-1];
   const t0=parse(puntos[0].x).getTime(),t1=parse(puntos[puntos.length-1].x).getTime();
@@ -369,7 +370,7 @@ function lineChart(puntos,{alto=220,etiqueta='seguidores'}={}){
 }
 function hBars(items,{fmtV=fmt}={}){
   if(!items.length)return '<p class="empty">Sin datos todavía.</p>';
-  const W=640,rowH=34,L=150,R=86,H=items.length*rowH+6;const mx=Math.max(...items.map(i=>i.v))||1;
+  const W=1000,rowH=34,L=130,R=90,H=items.length*rowH+6;const mx=Math.max(...items.map(i=>i.v))||1;
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Comparación">
     ${items.map((it,k)=>{const y=k*rowH+6,w=Math.max(4,(it.v/mx)*(W-L-R));return `<text x="${L-10}" y="${y+17}" text-anchor="end" style="${it.own?'fill:#142019;font-weight:700':''}">${esc(it.label)}</text>
       <path class="${it.own?'bar-own':'bar-oth'}" d="M${L},${y+4} h${w-4} a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-${w-4} z"/>
@@ -379,7 +380,7 @@ function hBars(items,{fmtV=fmt}={}){
 }
 function vBars(items,{alto=200,fmtV=fmt}={}){
   if(!items.length)return '<p class="empty">Todavía no hay campañas cargadas.</p>';
-  const W=640,H=alto,L=40,R=10,T=18,B=30;const mx=Math.max(...items.map(i=>i.v),1);const ticks=niceTicks(0,mx,3);const top=ticks[ticks.length-1];
+  const W=1000,H=alto*1.3,L=44,R=10,T=18,B=30;const mx=Math.max(...items.map(i=>i.v),1);const ticks=niceTicks(0,mx,3);const top=ticks[ticks.length-1];
   const bw=Math.min(56,(W-L-R)/items.length-14);const step=(W-L-R)/items.length;
   const Y=v=>T+(1-v/top)*(H-T-B);
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Consultas por campaña">
@@ -476,7 +477,7 @@ function vHoy(){
     <div class="g5">${dias.map(f=>{const x=posteo(f);return `<button class="day ${f===hoy?'hoy':''}" data-vista="calendario"><span class="dn">${DIAS[parse(f).getDay()]} ${parse(f).getDate()}</span>${marcaChip(x.marca)}<span class="tt ${x.tema?'':'no'}">${x.tema?esc(x.tema):x.aCargo==='Franco'?'Franco':'Sin tema'}</span><span class="row">${x.eje?`<span class="chip">${esc(S.meta.ejes[x.eje])}</span>`:''}<span class="chip ${x.estado==='publicado'?'ok':x.estado==='listo'?'doing':''}">${esc(ESTADOS_POST.find(e=>e[0]===x.estado)?.[1]||x.estado)}</span></span></button>`}).join('')}</div></section>
   <div class="g2">
     <section class="card"><div class="card-h"><h2>En curso</h2><span class="count">${curso.length}</span></div><ul class="items">${curso.length?curso.map(itemHTML).join(''):'<li class="empty">Nada en curso.</li>'}</ul></section>
-    <section class="card espera"><div class="card-h"><h2>Esperando a Nahuel</h2><span class="count">${espera.length}</span></div><ul class="lst">${espera.length?espera.map(t=>`<li><span class="f">${esc(frenteNombre(t.frente))}</span><span>${esc(t.texto)}</span></li>`).join(''):'<li class="empty">Nada pendiente de su lado.</li>'}</ul></section>
+    <section class="card espera"><div class="card-h"><h2>Esperando a Nahuel</h2><span class="count">${espera.length}</span></div><ul class="lst">${espera.length?espera.map(t=>`<li><span class="fr">${esc(frenteNombre(t.frente))}</span><span>${esc(t.texto)}</span></li>`).join(''):'<li class="empty">Nada pendiente de su lado.</li>'}</ul></section>
   </div>
   <section style="display:grid;gap:12px"><div class="card-h"><h2>Seguidores</h2><button class="btn sm" data-vista="metricas">Cargar o ver evolución</button></div><div class="g3">${tiles}</div></section>
   <form class="card" id="captura"><h3>Anotar rápido</h3><div class="add"><input id="cap-txt" placeholder="Un teléfono, una idea, algo que te dijo Nahuel… va a la bandeja" aria-label="Nota rápida"><button class="btn primary">Anotar</button></div></form>`;
