@@ -8,7 +8,8 @@ import { TIPOS, listar, crear, guardarPorClave } from '../lib/db.mjs';
 import { enviar } from '../lib/telegram.mjs';
 import { FRENTES, planSemana, aTelegram } from '../lib/reporte.mjs';
 import { iaDisponible, preguntar, generarIdeas } from '../lib/ia.mjs';
-import { hoyAR, lunesDe, iso } from '../lib/fechas.mjs';
+import { hoyAR, lunesDe, iso, sumarDias } from '../lib/fechas.mjs';
+import { fechasEntre } from '../lib/fechas-importantes.mjs';
 import { cuerpo } from '../lib/http.mjs';
 
 export const config = { maxDuration: 300 };
@@ -103,7 +104,8 @@ async function atender(m, chat) {
   }
   if (cmd === '/semana') {
     const regs = await listar(TIPOS);
-    return enviar(aTelegram(planSemana(regs, lunesDe(hoyAR()))), { chat });
+    const fechas = await fechasEntre(iso(hoyAR()), iso(sumarDias(hoyAR(), 30)), regs);
+    return enviar(aTelegram(planSemana(regs, lunesDe(hoyAR()), fechas)), { chat });
   }
   if (cmd === '/reporte') {
     return enviar(`<b>Reporte de la semana</b>
@@ -118,6 +120,7 @@ Abrilo, revisalo y tocá «Descargar PDF» para mandárselo a Nahuel. Si es fin 
     waitUntil((async () => {
       try {
         const regs = await listar(TIPOS);
+        for (const f of await fechasEntre(iso(hoyAR()), iso(sumarDias(hoyAR(), 60)), regs)) regs.push({ ...f, tipo: 'fecha' });
         if (cmd === '/p') {
           const r = await preguntar(arg, regs);
           await enviar(escHtml(r), { chat });

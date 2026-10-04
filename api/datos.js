@@ -4,6 +4,8 @@
 import { TIPOS, listar, crear, actualizar, borrar, guardarPorClave } from '../lib/db.mjs';
 import { FRENTES, MARCAS, CALENDARIO, REDES, EJES, UGC_MES, CUENTAS_RED, CUENTAS_COMPETENCIA, ESTADOS_CONTACTO } from '../lib/reporte.mjs';
 import { iaDisponible } from '../lib/ia.mjs';
+import { fechasEntre } from '../lib/fechas-importantes.mjs';
+import { hoyAR, sumarDias, iso } from '../lib/fechas.mjs';
 import { cuerpo, sinSesion, fallo } from '../lib/http.mjs';
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -14,7 +16,9 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const registros = await listar(TIPOS);
-      return res.status(200).json({ registros, meta: { frentes: FRENTES, marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: UGC_MES, cuentasRed: CUENTAS_RED, cuentasCompetencia: CUENTAS_COMPETENCIA, estadosContacto: ESTADOS_CONTACTO }, ia: iaDisponible() });
+      const hoy = hoyAR();
+      const fechas = await fechasEntre(iso(sumarDias(hoy, -14)), iso(sumarDias(hoy, 150)), registros);
+      return res.status(200).json({ registros, meta: { frentes: FRENTES, marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: UGC_MES, cuentasRed: CUENTAS_RED, cuentasCompetencia: CUENTAS_COMPETENCIA, estadosContacto: ESTADOS_CONTACTO, fechas }, ia: iaDisponible() });
     }
     const b = cuerpo(req);
     if (req.method === 'POST') {

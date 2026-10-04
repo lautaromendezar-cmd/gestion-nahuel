@@ -4,7 +4,8 @@
 import { TIPOS, listar } from '../lib/db.mjs';
 import { enviar } from '../lib/telegram.mjs';
 import { planSemana, coordinacionMartes, aTelegram } from '../lib/reporte.mjs';
-import { hoyAR, lunesDe } from '../lib/fechas.mjs';
+import { hoyAR, lunesDe, iso, sumarDias } from '../lib/fechas.mjs';
+import { fechasEntre } from '../lib/fechas-importantes.mjs';
 
 export default async function handler(req, res) {
   const secreto = (process.env.CRON_SECRET || '').trim();
@@ -12,9 +13,10 @@ export default async function handler(req, res) {
   const regs = await listar(TIPOS);
   const hoy = hoyAR();
   const lunes = lunesDe(hoy);
+  const fechas = await fechasEntre(iso(hoy), iso(sumarDias(hoy, 30)), regs);
   let r;
-  if (req.query.tipo === 'lunes') r = await enviar(aTelegram(planSemana(regs, lunes)));
-  else if (req.query.tipo === 'martes') r = await enviar(aTelegram(coordinacionMartes(regs, hoy)));
+  if (req.query.tipo === 'lunes') r = await enviar(aTelegram(planSemana(regs, lunes, fechas)));
+  else if (req.query.tipo === 'martes') r = await enviar(aTelegram(coordinacionMartes(regs, hoy, fechas)));
   else if (req.query.tipo === 'viernes') {
     r = await enviar(`<b>Viernes: reporte de la semana listo</b>
 https://gestion-nahuel.vercel.app/reporte.html

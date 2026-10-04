@@ -3,7 +3,8 @@
 import { TIPOS, listar, crear } from '../lib/db.mjs';
 import { iaDisponible, preguntar, generarIdeas, analizarCompetidor } from '../lib/ia.mjs';
 import { cuerpo, sinSesion, fallo } from '../lib/http.mjs';
-import { iso, hoyAR } from '../lib/fechas.mjs';
+import { iso, hoyAR, sumarDias } from '../lib/fechas.mjs';
+import { fechasEntre } from '../lib/fechas-importantes.mjs';
 
 export const config = { maxDuration: 300 };
 
@@ -14,6 +15,7 @@ export default async function handler(req, res) {
   const b = cuerpo(req);
   try {
     const regs = await listar(TIPOS);
+    for (const f of await fechasEntre(iso(hoyAR()), iso(sumarDias(hoyAR(), 60)), regs)) regs.push({ ...f, tipo: 'fecha' });
     if (b.modo === 'pregunta') {
       const texto = await preguntar(String(b.texto || '').slice(0, 4000), regs);
       return res.status(200).json({ texto });

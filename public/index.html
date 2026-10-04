@@ -153,6 +153,16 @@ button.chip{cursor:pointer}
 .redes{display:flex;gap:6px;flex-wrap:wrap}
 .redes button{border:1px solid var(--line);background:var(--surface);border-radius:7px;font-size:11.5px;font-weight:700;padding:3px 8px;color:var(--muted)}
 .redes button[aria-pressed="true"]{background:var(--ok-bg);border-color:#9ED3AE;color:var(--ok)}
+.fch{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;border-radius:7px;padding:2px 7px;background:var(--doing-bg);color:var(--doing);max-width:100%}
+.fch.comercial{background:#FDEFD9;color:#8A4B06}
+.fch.evento{background:var(--ok-bg);color:var(--ok)}
+.fch.puente{background:var(--sunk);color:var(--fg2)}
+.fchs{display:flex;flex-wrap:wrap;gap:4px}
+.flist{list-style:none;margin:0;padding:0;display:grid}
+.flist li{display:grid;grid-template-columns:5.2em minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.flist li:first-child{border-top:0}
+.flist .fd{font-weight:700;font-size:12.5px}
+.flist .fq{font-size:11.5px;color:var(--muted)}
 .ugc-slot{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
 
 /* tareas */
@@ -341,6 +351,12 @@ function posteo(fecha){
   if(!base)return p||null;
   return {marca:base.marca,aCargo:base.aCargo,estado:'pendiente',redes:{},...(p||{}),fecha};
 }
+const TIPO_F={feriado:'Feriado',puente:'Puente',comercial:'Fecha comercial',evento:'Evento'};
+const fechasDe=f=>(S.meta.fechas||[]).filter(x=>x.fecha===f);
+const fchChips=f=>{const l=fechasDe(f);return l.length?`<div class="fchs">${l.map(x=>`<span class="fch ${x.tipo}" title="${esc(TIPO_F[x.tipo])}">${esc(x.titulo)}</span>`).join('')}</div>`:''};
+function faltan(f){const n=Math.round((parse(f)-parse(hoyISO()))/864e5);return n===0?'hoy':n===1?'mañana':n<0?'pasó':`en ${n} días`}
+function listaFechas(dias,{borrar=false}={}){const hoy=hoyISO(),lim=iso(addDays(new Date(),dias));const l=(S.meta.fechas||[]).filter(x=>x.fecha>=hoy&&x.fecha<=lim);
+  return l.length?`<ul class="flist">${l.map(x=>`<li><span><span class="fd">${corta(x.fecha)}</span><br><span class="fq">${faltan(x.fecha)}</span></span><span><span class="fch ${x.tipo}">${esc(TIPO_F[x.tipo])}</span> <b style="font-size:13.5px">${esc(x.titulo)}</b>${x.lugar||x.marca&&x.marca!=='ambas'?`<br><span class="fq">${[x.marca&&S.meta.marcas[x.marca],x.lugar].filter(Boolean).map(esc).join(' · ')}</span>`:''}</span>${borrar&&x.id?delBtn(x.id):'<span></span>'}</li>`).join('')}</ul>`:'<p class="empty">Nada en este período.</p>'}
 const diasSemana=l=>[0,1,2,3,4].map(i=>iso(addDays(l,i)));
 
 /* ===== gráficos (SVG a mano, una serie, tooltip propio) ===== */
@@ -477,11 +493,12 @@ function vHoy(){
     <div class="kpi ${espera.length?'warn':''}"><span class="label">Esperando a Nahuel</span><div class="v num">${espera.length}</div><span class="d">${espera.length?'cosas que tiene que resolver él':'nada pendiente de su lado'}</span></div>
   </div>
   <section class="card"><div class="card-h"><h2>Semana del ${lblSemana(lun)}</h2><button class="btn sm" data-vista="calendario">Abrir calendario</button></div>
-    <div class="g5">${dias.map(f=>{const x=posteo(f);return `<button class="day ${f===hoy?'hoy':''}" data-vista="calendario"><span class="dn">${DIAS[parse(f).getDay()]} ${parse(f).getDate()}</span>${marcaChip(x.marca)}<span class="tt ${x.tema?'':'no'}">${x.tema?esc(x.tema):x.aCargo==='Franco'?'Franco':'Sin tema'}</span><span class="row">${x.eje?`<span class="chip">${esc(S.meta.ejes[x.eje])}</span>`:''}<span class="chip ${x.estado==='publicado'?'ok':x.estado==='listo'?'doing':''}">${esc(ESTADOS_POST.find(e=>e[0]===x.estado)?.[1]||x.estado)}</span></span></button>`}).join('')}</div></section>
+    <div class="g5">${dias.map(f=>{const x=posteo(f);return `<button class="day ${f===hoy?'hoy':''}" data-vista="calendario"><span class="dn">${DIAS[parse(f).getDay()]} ${parse(f).getDate()}</span>${marcaChip(x.marca)}<span class="tt ${x.tema?'':'no'}">${x.tema?esc(x.tema):x.aCargo==='Franco'?'Franco':'Sin tema'}</span>${fchChips(f)}<span class="row">${x.eje?`<span class="chip">${esc(S.meta.ejes[x.eje])}</span>`:''}<span class="chip ${x.estado==='publicado'?'ok':x.estado==='listo'?'doing':''}">${esc(ESTADOS_POST.find(e=>e[0]===x.estado)?.[1]||x.estado)}</span></span></button>`}).join('')}</div></section>
   <div class="g2">
+    <section class="card"><div class="card-h"><h2>Próximas fechas</h2><button class="btn sm" data-vista="calendario">Cargar un evento</button></div>${listaFechas(30)}</section>
     <section class="card"><div class="card-h"><h2>En curso</h2><span class="count">${curso.length}</span></div><ul class="items">${curso.length?curso.map(itemHTML).join(''):'<li class="empty">Nada en curso.</li>'}</ul></section>
-    <section class="card espera"><div class="card-h"><h2>Esperando a Nahuel</h2><span class="count">${espera.length}</span></div><ul class="lst">${espera.length?espera.map(t=>`<li><span class="fr">${esc(frenteNombre(t.frente))}</span><span>${esc(t.texto)}</span></li>`).join(''):'<li class="empty">Nada pendiente de su lado.</li>'}</ul></section>
   </div>
+  <section class="card espera"><div class="card-h"><h2>Esperando a Nahuel</h2><span class="count">${espera.length}</span></div><ul class="lst">${espera.length?espera.map(t=>`<li><span class="fr">${esc(frenteNombre(t.frente))}</span><span>${esc(t.texto)}</span></li>`).join(''):'<li class="empty">Nada pendiente de su lado.</li>'}</ul></section>
   <section style="display:grid;gap:12px"><div class="card-h"><h2>Seguidores</h2><button class="btn sm" data-vista="metricas">Cargar o ver evolución</button></div><div class="g3">${tiles}</div></section>
   <form class="card" id="captura"><h3>Anotar rápido</h3><div class="add"><input id="cap-txt" placeholder="Un teléfono, una idea, algo que te dijo Nahuel… va a la bandeja" aria-label="Nota rápida"><button class="btn primary">Anotar</button></div></form>`;
 }
@@ -492,7 +509,7 @@ function vCalendario(){
   const cards=dias.map(f=>{const p=posteo(f);const franco=p.aCargo==='Franco';const redes=S.meta.redes[p.marca]||[];
     return `<article class="dia ${f===hoy?'hoy':''} ${franco?'franco':''} ${p.estado==='publicado'?'publicado':''}" data-fecha="${f}">
       <div class="dia-h"><b>${DIAS_L[parse(f).getDay()]} ${parse(f).getDate()}</b>${marcaChip(p.marca)}</div>
-      ${franco?'<span class="small muted">A cargo de Franco</span>':''}
+      ${fchChips(f)}${franco?'<span class="small muted">A cargo de Franco</span>':''}
       <div class="seg" role="group" aria-label="Eje">${Object.entries(S.meta.ejes).map(([k,t])=>`<button data-eje="${k}" class="${p.eje===k?'on':''}" aria-pressed="${p.eje===k}">${t}</button>`).join('')}</div>
       <textarea class="f" id="tema-${f}" data-pf="tema" rows="2" placeholder="Qué se publica" aria-label="Tema">${esc(p.tema)}</textarea>
       <input class="f" id="link-${f}" data-pf="link" value="${esc(p.link)}" placeholder="Link de la pieza o del Drive" aria-label="Link" style="font-size:12.5px">
@@ -516,6 +533,11 @@ function vCalendario(){
   <div class="g5">${cards}</div>
   <section class="card"><div class="card-h"><h2>Avance de ${MESES[m]}</h2><span class="small muted">Publicados sobre días asignados</span></div>
     <div class="g3">${Object.entries(tot).map(([k,[a,b]])=>`<div style="display:grid;gap:6px"><div class="row between">${marcaChip(k)}<b class="num">${a} / ${b}</b></div><div class="bar"><i style="width:${b?a/b*100:0}%"></i></div></div>`).join('')}</div></section>
+  <div class="g2"><section class="card"><div class="card-h"><h2>Fechas y eventos</h2><span class="small muted">Próximos 90 días · los feriados se leen solos</span></div>${listaFechas(90,{borrar:true})}</section>
+  <form class="card" id="nuevo-evento"><h2>Cargar un evento</h2><p class="small muted">Una expo, una feria, un lanzamiento: aparece en el calendario, en el plan del lunes y la IA lo usa para las ideas.</p>
+    <input class="f" id="ev-tit" placeholder="Expo Moto Gualeguaychú" aria-label="Nombre del evento">
+    <div class="row"><input class="f" type="date" id="ev-fecha" aria-label="Fecha"><select class="f" id="ev-marca" aria-label="Marca"><option value="ambas">Las dos</option><option value="centenaria">Centenaria</option><option value="latina">LaTiNa</option><option value="cente-azul">Cente Azul</option></select></div>
+    <input class="f" id="ev-lugar" placeholder="Lugar o nota (opcional)" aria-label="Lugar"><div><button class="btn primary">Agregar evento</button></div></form></div>
   <section style="display:grid;gap:12px"><div class="card-h"><h2>Reels UGC de ${MESES[m]}</h2><span class="small muted">Lautaro coordina la idea, el mensaje y dónde se usa</span></div><div class="g2">${ugcCards}</div></section>`;
 }
 
@@ -698,6 +720,8 @@ document.addEventListener('submit',async e=>{
   if(f.classList.contains('add')&&f.dataset.frente){const inp=f.querySelector('input');const v=inp.value.trim();if(!v)return;inp.value='';await nuevo('tarea',{frente:f.dataset.frente,texto:v,estado:'pendiente',deNahuel:false,hechoEn:null});$('add-'+f.dataset.frente)?.focus();return}
   if(f.id==='nueva-idea'){const v=$('ni-txt').value.trim();if(!v)return;$('ni-txt').value='';await nuevo('idea',{titulo:v,marca:'ambas',estado:'nueva',origen:'propia'});return}
   if(f.id==='nueva-obs'){const v=$('obs-txt').value.trim();if(!v)return;$('obs-txt').value='';const nombre=COMPETIDORES.find(c=>c[0]===S.compSel)[1];await nuevo('obs',{competidor:nombre,texto:v,origen:'propia',fecha:hoyISO()});return}
+  if(f.id==='nuevo-evento'){const titulo=$('ev-tit').value.trim(),fecha=$('ev-fecha').value;if(!titulo||!fecha){status('Falta el nombre o la fecha del evento');return}
+    await nuevo('evento',{titulo,fecha,marca:$('ev-marca').value,lugar:$('ev-lugar').value.trim()});await cargar();status('Evento agregado');return}
   if(f.id==='carga-met'||f.id==='carga-comp'){
     const fecha=f.id==='carga-met'?$('met-fecha').value||hoyISO():hoyISO();let n=0;
     for(const inp of f.querySelectorAll('[data-met-in]')){const v=nmb(inp.value.replace(/k$/i,'000'));if(!v)continue;n++;await porClave('metrica',`${inp.dataset.metIn}_${fecha}`,{cuenta:inp.dataset.metIn,fecha,seguidores:v})}
@@ -717,7 +741,7 @@ document.addEventListener('click',async e=>{
   if(t.id==='prev'){semana=addDays(semana,-7);return render()}
   if(t.id==='next'){semana=addDays(semana,7);return render()}
   if(t.id==='hoy'){semana=semanaInicial();return render()}
-  if(t.dataset.del){if(armar(t.dataset.del))quitar(t.dataset.del);return}
+  if(t.dataset.del){if(armar(t.dataset.del)){const ev=buscar(t.dataset.del)?.tipo==='evento';await quitar(t.dataset.del);if(ev)cargar()}return}
   if(t.dataset.toggle){S.open[t.dataset.toggle]=!S.open[t.dataset.toggle];return render()}
   if(t.dataset.diario){const hoy=hoyISO();const d=S.regs.find(r=>r.tipo==='diario'&&r.clave===hoy)||{};return porClave('diario',hoy,{fecha:hoy,[t.dataset.diario]:!d[t.dataset.diario]})}
   const dia=t.closest('[data-fecha]');
