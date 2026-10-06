@@ -151,7 +151,7 @@ button.chip{cursor:pointer}
 .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--sunk)}
 .seg button{flex:1;border:0;background:transparent;padding:5px 4px;font-size:11.5px;font-weight:600;color:var(--muted)}
 .seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.seg.est{display:grid;grid-template-columns:1fr 1fr}
+.seg.est,.seg.ejes{display:grid;grid-template-columns:1fr 1fr}
 .seg.est button.on{background:var(--accent);color:#fff}
 .dia textarea.f{font-size:13px;min-height:62px}
 .redes{display:flex;gap:6px;flex-wrap:wrap}
@@ -674,7 +674,7 @@ function vCalendario(){
     return `<article class="dia ${f===hoy?'hoy':''} ${p.estado==='publicado'?'publicado':''}" data-fecha="${f}">
       <div class="dia-h"><b>${DIAS_L[parse(f).getDay()]} ${parse(f).getDate()}</b>${marcaChip(p.marca)}</div>
       ${fchChips(f)}
-      <div class="seg" role="group" aria-label="Eje">${Object.entries(S.meta.ejes).map(([k,t])=>`<button data-eje="${k}" class="${p.eje===k?'on':''}" aria-pressed="${p.eje===k}">${t}</button>`).join('')}</div>
+      <div class="seg ejes" role="group" aria-label="Eje">${Object.entries(S.meta.ejes).map(([k,t])=>`<button data-eje="${k}" class="${p.eje===k?'on':''}" aria-pressed="${p.eje===k}">${t}</button>`).join('')}</div>
       <textarea class="f" id="tema-${f}" data-pf="tema" rows="2" placeholder="Qué se publica" aria-label="Tema">${esc(p.tema)}</textarea>
       <input class="f" id="link-${f}" data-pf="link" value="${esc(p.link)}" placeholder="Link de la pieza o del Drive" aria-label="Link" style="font-size:12.5px">
       <div class="seg est" role="group" aria-label="Estado">${ESTADOS_POST.map(([k,t])=>`<button data-est="${k}" class="${p.estado===k?'on':''}" aria-pressed="${p.estado===k}">${t}</button>`).join('')}</div>
