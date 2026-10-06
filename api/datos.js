@@ -42,11 +42,11 @@ export default async function handler(req, res) {
       const datos = { ...resto, editadoPor: req.rol };
       if (b.clave && b.tipo === 'idea' && req.rol !== 'lautaro') return prohibido();
       if (b.clave) {
-        const r = await guardarClave(b.tipo, String(b.clave), datos, typeof b.antes === 'object' ? b.antes : {});
+        const r = await guardarClave(b.tipo, String(b.clave), datos, typeof b.antes === 'object' ? b.antes : {}, req.rol);
         if (r.conflicto) return res.status(409).json({ error: 'Otra persona cambió esto recién', conflicto: true, actual: r.actual });
         return res.status(200).json(r.registro);
       }
-      return res.status(200).json(await crear(b.tipo, { ...datos, autor: req.rol }));
+      return res.status(200).json(await crear(b.tipo, { ...datos, autor: req.rol }, req.rol));
     }
     if (req.method === 'PATCH' || req.method === 'DELETE') {
       if (!UUID.test(b.id || '')) return res.status(400).json({ error: 'id inválido' });
@@ -56,12 +56,12 @@ export default async function handler(req, res) {
         if (!alcanza(req.rol, previo)) return prohibido();
       }
       if (req.method === 'DELETE') {
-        if (!(await borrar(b.id))) return res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
+        if (!(await borrar(b.id, req.rol))) return res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
         return res.status(200).json({ ok: true });
       }
       if (typeof b.cambios !== 'object') return res.status(400).json({ error: 'cambios inválidos' });
       const { autor: _b, ...cambios } = b.cambios;
-      const r = await actualizar(b.id, { ...cambios, editadoPor: req.rol });
+      const r = await actualizar(b.id, { ...cambios, editadoPor: req.rol }, req.rol);
       return r ? res.status(200).json(r) : res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
     }
     return res.status(405).json({ error: 'método no permitido' });

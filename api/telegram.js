@@ -68,12 +68,12 @@ async function atender(m, chat) {
 
   if (cmd === '/idea') {
     if (!arg) return enviar('Escribí la idea después de /idea.', { chat });
-    await crear('idea', { titulo: arg, marca: 'ambas', estado: 'nueva', origen: 'Telegram' });
+    await crear('idea', { titulo: arg, marca: 'ambas', estado: 'nueva', origen: 'Telegram', autor: 'lautaro' }, 'bot');
     return enviar('Anotada en Ideas.', { chat });
   }
   if (cmd === '/tarea') {
     if (!arg) return enviar('Escribí la tarea después de /tarea.', { chat });
-    await crear('tarea', { frente: 'general', texto: arg, estado: 'pendiente', deNahuel: false, hechoEn: null });
+    await crear('tarea', { frente: 'general', texto: arg, estado: 'pendiente', deNahuel: false, hechoEn: null }, 'bot');
     return enviar('Tarea anotada en General.', { chat });
   }
   if (cmd === '/seg') {
@@ -84,7 +84,7 @@ async function atender(m, chat) {
       const cuenta = ALIAS[partes[i]];
       const n = Number(String(partes[i + 1]).replace(/[.,]/g, '').replace(/k$/, '000'));
       if (!cuenta || !Number.isFinite(n)) continue;
-      await guardarPorClave('metrica', 'clave', `${cuenta}_${fecha}`, { cuenta, fecha, seguidores: n });
+      await guardarPorClave('metrica', 'clave', `${cuenta}_${fecha}`, { cuenta, fecha, seguidores: n }, 'bot');
       cargadas.push(`${partes[i]} ${n.toLocaleString('es-AR')}`);
     }
     if (!cargadas.length) return enviar('Formato: /seg igc 8120 igl 12000 …\nigc/fbc = Centenaria, igl/fbl/ttl = LaTiNa, iga = Cente Azul.', { chat });
@@ -126,7 +126,7 @@ Abrilo, revisalo y tocá «Descargar PDF» para mandárselo a Nahuel. Si es fin 
           await enviar(escHtml(r), { chat });
         } else {
           const { ideas } = await generarIdeas({ marca: 'ambas', cantidad: 5, foco: arg }, regs);
-          for (const i of ideas) await crear('idea', { ...i, estado: 'nueva', origen: 'IA' });
+          for (const i of ideas) await crear('idea', { ...i, estado: 'nueva', origen: 'IA', autor: 'lautaro' }, 'IA');
           await enviar(['<b>Ideas nuevas (ya están en el panel)</b>', ...ideas.map((i) => `\n<b>${escHtml(i.titulo)}</b> · ${escHtml(i.marca)} · ${escHtml(i.formato)}\n${escHtml(i.descripcion)}`)].join('\n'), { chat });
         }
       } catch (e) {
@@ -146,6 +146,6 @@ Abrilo, revisalo y tocá «Descargar PDF» para mandárselo a Nahuel. Si es fin 
   if (m.contact) nota = `${m.contact.first_name || ''} ${m.contact.last_name || ''}: ${m.contact.phone_number}`.trim();
   const de = m.forward_origin?.sender_user?.first_name || m.forward_origin?.sender_user_name || m.forward_from?.first_name || m.forward_sender_name || '';
   if (!nota) return enviar('Eso no lo puedo guardar. Mandame texto, un link o un contacto.', { chat });
-  await crear('nota', { texto: nota, de, origen: 'Telegram', archivada: false });
+  await crear('nota', { texto: nota, de, origen: 'Telegram', archivada: false }, 'bot');
   return enviar('Anotado en la bandeja.', { chat });
 }
