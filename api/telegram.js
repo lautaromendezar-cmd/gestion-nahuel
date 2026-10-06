@@ -77,7 +77,7 @@ async function atender(m, chat) {
     return enviar('Tarea anotada en General.', { chat });
   }
   if (cmd === '/seg') {
-    const partes = arg.toLowerCase().split(/s+/);
+    const partes = arg.toLowerCase().split(/\s+/);
     const fecha = iso(hoyAR());
     const cargadas = [];
     for (let i = 0; i < partes.length - 1; i += 2) {
