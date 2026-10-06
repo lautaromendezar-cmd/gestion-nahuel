@@ -145,7 +145,6 @@ button.chip{cursor:pointer}
 /* calendario */
 .dia{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
 .dia.hoy{border-color:var(--accent)}
-.dia.franco{background:#FAFBFD}
 .dia.publicado{border-color:#9ED3AE;background:linear-gradient(180deg,#F3FBF5,#fff)}
 .dia-h{display:flex;justify-content:space-between;align-items:center;gap:6px}
 .dia-h b{font-size:13px}
@@ -191,19 +190,43 @@ button.mc:hover{background:#FAFBFA}
 .mc .fch{font-size:10.5px;padding:1px 6px}
 .mc-pie{margin-top:auto;gap:4px}
 .mc-pie .chip{font-size:11px;padding:1px 7px}
-.salir{border:0;background:transparent;color:var(--side-muted);font-size:12px;font-weight:600;padding:4px 6px;border-radius:7px}
-.salir:hover{color:#fff;background:var(--side-hover)}
+/* barra superior: quién está conectado y salir */
+.topbar{position:sticky;top:0;z-index:12;display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px;padding:0 32px;background:rgba(243,243,244,.86);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.topbar .status{font-size:12px;color:var(--muted)}
+.usr{display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--fg);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none}
+.usr-t{display:grid;line-height:1.2;margin-right:6px}
+.usr-t b{font-size:13.5px}
+.usr-t span{font-size:11.5px;color:var(--muted)}
+.usr-m{display:none}
 
 /* avisos */
-#avisos{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;display:grid;gap:8px;width:min(520px,calc(100% - 32px));pointer-events:none}
-.aviso{pointer-events:auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:#141416;color:#fff;border-radius:12px;padding:10px 10px 10px 14px;font-size:13.5px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.aviso-i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;background:rgba(255,255,255,.14)}
+#avisos{position:fixed;right:24px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;flex-direction:column;width:min(380px,calc(100% - 32px));pointer-events:none}
+/* cada aviso va en un envoltorio que se pliega al salir, así los de arriba bajan suave */
+.aviso-w{display:grid;grid-template-rows:1fr;transition:grid-template-rows .26s cubic-bezier(.2,.8,.2,1)}
+.aviso-w>div{min-height:0;overflow:hidden;padding:12px 28px 30px;margin:-4px -28px -30px}
+.aviso-w.sale{grid-template-rows:0fr}
+.aviso{position:relative;overflow:hidden;pointer-events:auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;background:#141416;color:#fff;border-radius:12px;padding:11px 8px 11px 14px;font-size:13px;font-weight:600;line-height:1.4;box-shadow:0 1px 2px rgba(0,0,0,.2),0 8px 20px rgba(0,0,0,.2);
+  animation:aviso-entra .34s cubic-bezier(.2,.9,.25,1.15) both}
+.aviso-w.sale .aviso{animation:aviso-sale .24s ease-in both}
+@keyframes aviso-entra{from{opacity:0;transform:translateX(28px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes aviso-sale{to{opacity:0;transform:translateX(36px)}}
+.aviso-i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:rgba(255,255,255,.14);flex:none}
+.aviso-i.pop{animation:aviso-pop .32s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes aviso-pop{from{transform:scale(.4)}to{transform:none}}
+/* barrita que muestra cuánto falta para que se cierre solo */
+.aviso-b{position:absolute;left:0;bottom:0;height:2px;width:100%;background:rgba(255,255,255,.35);transform-origin:left;animation:aviso-tiempo linear forwards}
+@keyframes aviso-tiempo{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.aviso:hover .aviso-b{animation-play-state:paused}
 .aviso.ok .aviso-i{background:#2F8A4E}
 .aviso.error{background:#7A1A12} .aviso.error .aviso-i{background:#B42318}
 .aviso.conflicto{background:#7A3A0C} .aviso.conflicto .aviso-i{background:#C2570F}
 .aviso.info .aviso-i{background:#1B5C8F}
 .aviso-x{border:0;background:transparent;color:rgba(255,255,255,.7);font-size:18px;width:30px;height:30px;border-radius:8px}
 .aviso-x:hover{background:rgba(255,255,255,.12);color:#fff}
+@media (max-width:900px){#avisos{right:12px;left:12px;width:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
+@media (prefers-reduced-motion:reduce){.aviso,.aviso-w.sale .aviso{animation:aviso-fundido .2s both}.aviso-w.sale .aviso{animation-direction:reverse}.aviso-w{transition:none}.aviso-i.pop{animation:none}}
+@keyframes aviso-fundido{from{opacity:0}to{opacity:1}}
 
 /* tareas */
 .items{list-style:none;margin:0;padding:0;display:grid;gap:1px}
@@ -290,12 +313,18 @@ tr.nuevo td{background:#FAFBFA}
   .side{display:none}
   .topm{display:grid;gap:10px;position:sticky;top:0;z-index:10;background:var(--side);color:#fff;padding:12px 16px 0;padding-top:calc(12px + env(safe-area-inset-top,0px))}
   .topm .row b{font-size:14.5px}
+  .topbar{display:none}
+  .usr-m{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--side-fg);background:var(--side-hover);border-radius:10px;padding:6px 6px 6px 8px}
+  .usr-m b{color:#fff}
+  .usr-m .av{width:26px;height:26px;font-size:12px;background:#fff;color:var(--side)}
+  .usr-m>span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .salir-m{border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;font-weight:600;font-size:12.5px;border-radius:8px;padding:6px 12px}
   .topm .logos img{height:28px}
   .topm nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px 10px}
   .topm nav::-webkit-scrollbar{display:none}
   .topm .nav{width:auto;white-space:nowrap;padding:7px 11px}
   .topm .nav svg{display:none}
-  .main{padding:18px 16px 70px}
+  .main{padding:18px 16px 110px}
   .g2,.g3,.docs,.hero{grid-template-columns:1fr}
   .g5{grid-template-columns:1fr}
   .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -366,8 +395,8 @@ async function api(method,path,body){
 function status(t){document.querySelectorAll('.status').forEach(el=>el.textContent=t)}
 const hora=()=>new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 const NOMBRE={lautaro:'Lautaro',franco:'Franco'};
-const SEGUIDOS=['posteo','evento'];
-function queEs(r){return r.tipo==='posteo'?`la publicación del ${corta(r.fecha||r.clave)}`:r.tipo==='evento'?`el evento «${r.titulo}»`:'un registro'}
+const SEGUIDOS=['posteo','evento','idea'];
+function queEs(r){return r.tipo==='posteo'?`la publicación del ${corta(r.fecha||r.clave)}`:r.tipo==='evento'?`el evento «${r.titulo}»`:r.tipo==='idea'?`la idea «${r.titulo}»`:'un registro'}
 async function cargar(){
   const d=await api('GET','/api/datos');
   if(S.rol&&S.rol!==d.rol)$('app').innerHTML='';
@@ -388,22 +417,35 @@ const de=t=>S.regs.filter(r=>r.tipo===t);
 const buscar=id=>S.regs.find(r=>r.id===id);
 
 /* avisos abajo: cada cambio dice si la base lo confirmó o no */
+// Abajo a la derecha. Entran deslizando desde la derecha, los que se cierran
+// solos muestran una barrita de tiempo (se pausa con el mouse encima) y al
+// salir se pliegan para que el resto baje suave. Máximo 4 a la vista.
 let avisoN=0;
+const ICO_AV={ok:'✓',error:'!',conflicto:'!',info:'↻'};
+const DURA={ok:3500,info:9000};
+function cerrarAviso(w){if(!w||!w.isConnected||w.classList.contains('sale'))return;w.classList.add('sale');setTimeout(()=>w.remove(),280)}
+function temporizar(w,tipo){
+  const a=w.querySelector('.aviso');a.querySelector('.aviso-b')?.remove();clearTimeout(w._t);
+  if(!DURA[tipo])return;
+  const b=document.createElement('span');b.className='aviso-b';b.style.animationDuration=DURA[tipo]+'ms';a.appendChild(b);
+  b.addEventListener('animationend',()=>cerrarAviso(w));
+}
 function aviso(tipo,texto){
   const box=$('avisos');if(!box)return;
-  const id='av'+(++avisoN);const ico={ok:'✓',error:'!',conflicto:'!',info:'↻',guardando:''}[tipo];
-  const el=document.createElement('div');el.className='aviso '+tipo;el.id=id;el.setAttribute('role',tipo==='error'||tipo==='conflicto'?'alert':'status');
-  el.innerHTML=`<span class="aviso-i">${tipo==='guardando'?'<span class="spin"></span>':ico}</span><span class="aviso-t">${esc(texto)}</span><button class="aviso-x" aria-label="Cerrar">×</button>`;
-  box.appendChild(el);while(box.children.length>3)box.firstElementChild.remove();
-  if(tipo==='ok'||tipo==='info')setTimeout(()=>el.remove(),tipo==='ok'?3500:9000);
-  return el;
+  const w=document.createElement('div');w.className='aviso-w';w.id='av'+(++avisoN);
+  w.innerHTML=`<div><div class="aviso ${tipo}" role="${tipo==='error'||tipo==='conflicto'?'alert':'status'}"><span class="aviso-i">${tipo==='guardando'?'<span class="spin"></span>':ICO_AV[tipo]}</span><span class="aviso-t">${esc(texto)}</span><button class="aviso-x" aria-label="Cerrar">×</button></div></div>`;
+  box.appendChild(w);
+  const vivos=[...box.children].filter(x=>!x.classList.contains('sale'));
+  vivos.slice(0,Math.max(0,vivos.length-4)).forEach(cerrarAviso);
+  temporizar(w,tipo);
+  return w;
 }
-function resolverAviso(el,tipo,texto){
-  if(!el||!el.isConnected){aviso(tipo,texto);return}
-  el.className='aviso '+tipo;el.setAttribute('role',tipo==='ok'?'status':'alert');
-  el.querySelector('.aviso-i').textContent={ok:'✓',error:'!',conflicto:'!',info:'↻'}[tipo];
-  el.querySelector('.aviso-t').textContent=texto;
-  if(tipo==='ok')setTimeout(()=>el.remove(),3500);
+function resolverAviso(w,tipo,texto){
+  if(!w||!w.isConnected||w.classList.contains('sale')){aviso(tipo,texto);return}
+  const a=w.querySelector('.aviso');a.className='aviso '+tipo;a.setAttribute('role',tipo==='ok'||tipo==='info'?'status':'alert');
+  const i=a.querySelector('.aviso-i');i.textContent=ICO_AV[tipo];i.classList.remove('pop');void i.offsetWidth;i.classList.add('pop');
+  a.querySelector('.aviso-t').textContent=texto;
+  temporizar(w,tipo);
 }
 // La respuesta es la fila que devolvió la base (RETURNING): se compara campo por campo con lo que se mandó.
 const coincide=(fila,datos)=>fila&&Object.entries(datos).every(([k,v])=>JSON.stringify(fila[k]??null)===JSON.stringify(v??null));
@@ -538,7 +580,7 @@ const ICO={
 };
 const GRUPOS_LAUTARO=[['Operación',[['hoy','Hoy'],['calendario','Calendario'],['tareas','Tareas'],['ads','Meta Ads'],['metricas','Métricas']]],['Estrategia',[['ideas','Ideas'],['competencia','Competencia'],['saber','Saber'],['preguntar','Preguntar']]],['Registro',[['bandeja','Bandeja'],['contactos','Contactos']]]];
 // Franco ve sólo publicaciones y calendario; el servidor tampoco le manda el resto.
-const GRUPOS_FRANCO=[['Publicaciones',[['calendario','Calendario']]]];
+const GRUPOS_FRANCO=[['Publicaciones',[['calendario','Calendario'],['ideas','Ideas']]]];
 const grupos=()=>S.rol==='franco'?GRUPOS_FRANCO:GRUPOS_LAUTARO;
 const vistaPermitida=v=>grupos().some(g=>g[1].some(([k])=>k===v));
 const yo=()=>S.rol==='franco'?'Franco':'Lautaro';
@@ -549,12 +591,15 @@ function navHTML(){
   const b=badges();
   return grupos().map(([g,items])=>`<div class="navgrp"><div class="gl">${g}</div>${items.map(([k,t])=>`<button class="nav" data-vista="${k}" ${S.vista===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg>${t}${b[k]&&b[k][0]?`<span class="bd ${b[k][1]?'alert':''}">${b[k][0]}</span>`:''}</button>`).join('')}</div>`).join('');
 }
+const ICO_SALIR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg>';
+function usuarioHTML(){return `<div class="usr"><span class="av" aria-hidden="true">${yo()[0]}</span><span class="usr-t"><b>${yo()}</b><span>${S.rol==='franco'?'Publicaciones e ideas':'Acceso completo'}</span></span><button class="btn sm" id="salir">${ICO_SALIR}Salir</button></div>`}
 function shell(){return `<div class="app">
   <aside class="side"><div class="brand"><div class="logos"><img src="/img/logo-latina.png" alt="LaTiNa"><img src="/img/logo-centenaria.png" alt="Centenaria"></div><b>Redes Latina <span>|</span> Centenaria</b></div>
     <nav id="nav-side" aria-label="Secciones"></nav>
-    <div class="side-foot">${S.rol==='lautaro'?'<button class="btn primary" id="exportar">Reporte para Nahuel (PDF)</button>':''}<div class="row between"><span class="status"></span><button class="salir" id="salir">Salir (${yo()})</button></div></div></aside>
+    <div class="side-foot">${S.rol==='lautaro'?'<button class="btn primary" id="exportar">Reporte para Nahuel (PDF)</button>':''}</div></aside>
   <div style="min-width:0">
-    <div class="topm"><div class="row between"><span class="row" style="gap:10px"><div class="logos"><img src="/img/logo-latina.png" alt="LaTiNa"><img src="/img/logo-centenaria.png" alt="Centenaria"></div><b>Redes Latina | Centenaria</b></span><span class="row">${S.rol==='lautaro'?'<button class="btn sm primary" id="exportar-m">Reporte</button>':''}<button class="salir" id="salir-m">Salir</button></span></div><nav id="nav-top" aria-label="Secciones"></nav></div>
+    <header class="topbar"><span class="status"></span>${usuarioHTML()}</header>
+    <div class="topm"><div class="row between"><span class="row" style="gap:10px"><div class="logos"><img src="/img/logo-latina.png" alt="LaTiNa"><img src="/img/logo-centenaria.png" alt="Centenaria"></div><b>Redes Latina | Centenaria</b></span><span class="row">${S.rol==='lautaro'?'<button class="btn sm primary" id="exportar-m">Reporte</button>':''}</span></div><div class="usr-m"><span class="av">${yo()[0]}</span><span><b>${yo()}</b> · ${S.rol==='franco'?'Publicaciones e ideas':'Acceso completo'}</span><button class="salir-m" id="salir-m">Salir</button></div><nav id="nav-top" aria-label="Secciones"></nav></div>
     <main class="main" id="vista"></main>
   </div></div>`}
 // soltar=true: no conservar lo que había en el campo activo (después de un
@@ -625,10 +670,10 @@ function vHoy(){
 /* ===== CALENDARIO ===== */
 function vCalendario(){
   const dias=diasSemana(semana);const hoy=hoyISO();
-  const cards=dias.map(f=>{const p=posteo(f);const ajeno=p.aCargo&&p.aCargo!==yo();const redes=S.meta.redes[p.marca]||[];
-    return `<article class="dia ${f===hoy?'hoy':''} ${ajeno?'franco':''} ${p.estado==='publicado'?'publicado':''}" data-fecha="${f}">
+  const cards=dias.map(f=>{const p=posteo(f);const redes=S.meta.redes[p.marca]||[];
+    return `<article class="dia ${f===hoy?'hoy':''} ${p.estado==='publicado'?'publicado':''}" data-fecha="${f}">
       <div class="dia-h"><b>${DIAS_L[parse(f).getDay()]} ${parse(f).getDate()}</b>${marcaChip(p.marca)}</div>
-      ${fchChips(f)}${ajeno?`<span class="small muted">A cargo de ${esc(p.aCargo)}</span>`:''}
+      ${fchChips(f)}
       <div class="seg" role="group" aria-label="Eje">${Object.entries(S.meta.ejes).map(([k,t])=>`<button data-eje="${k}" class="${p.eje===k?'on':''}" aria-pressed="${p.eje===k}">${t}</button>`).join('')}</div>
       <textarea class="f" id="tema-${f}" data-pf="tema" rows="2" placeholder="Qué se publica" aria-label="Tema">${esc(p.tema)}</textarea>
       <input class="f" id="link-${f}" data-pf="link" value="${esc(p.link)}" placeholder="Link de la pieza o del Drive" aria-label="Link" style="font-size:12.5px">
@@ -664,7 +709,7 @@ function avance(y,m){
     <div class="g3">${Object.entries(tot).map(([k,[a,b]])=>`<div style="display:grid;gap:6px"><div class="row between">${marcaChip(k)}<b class="num">${a} / ${b}</b></div><div class="bar"><i style="width:${b?a/b*100:0}%"></i></div></div>`).join('')}</div></section>`;
 }
 function calHead(nav){
-  const sub=S.rol==='franco'?'Las publicaciones de las tres marcas. Los miércoles son tuyos (Cente Azul); el resto lo carga Lautaro.':'Un posteo por día hábil, con su marca fija. Los martes se coordina con la oficina lo que sale desde el miércoles.';
+  const sub=S.rol==='franco'?'Las publicaciones de las tres marcas, un posteo por día hábil.':'Un posteo por día hábil, con su marca fija. Los martes se coordina con la oficina lo que sale desde el miércoles.';
   return head('Calendario',sub,`<div class="row"><div class="seg calv" role="group" aria-label="Vista">${[['semana','Semana'],['mes','Mes']].map(([k,t])=>`<button data-calv="${k}" class="${S.calVista===k?'on':''}" aria-pressed="${S.calVista===k}">${t}</button>`).join('')}</div><div class="row calnav">${nav}</div></div>`);
 }
 
@@ -682,7 +727,7 @@ function vMes(){
     if(finde){celdas.push(`<div class="${cls}">${num}${fchChips(f)}</div>`);continue}
     const est=ESTADOS_POST.find(e=>e[0]===p.estado)?.[1]||p.estado;
     celdas.push(`<button class="${cls}" data-irsemana="${f}" aria-label="${esc(`${DIAS_L[d.getDay()]} ${d.getDate()}: ${S.meta.marcas[p.marca]||''}, ${p.tema||'sin tema'}, ${est}`)}">
-      ${num}${marcaChip(p.marca)}<span class="mc-t ${p.tema?'':'no'}">${p.tema?esc(p.tema):p.aCargo&&p.aCargo!==yo()?esc(p.aCargo):'Sin tema'}</span>${fchChips(f)}
+      ${num}${marcaChip(p.marca)}<span class="mc-t ${p.tema?'':'no'}">${p.tema?esc(p.tema):'Sin tema'}</span>${fchChips(f)}
       <span class="row mc-pie">${p.eje?`<span class="chip">${esc(S.meta.ejes[p.eje])}</span>`:''}<span class="chip ${EST_CHIP[p.estado]||''}">${esc(est)}</span></span></button>`)}
   const cab=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(d=>`<div class="dh">${d}</div>`).join('');
   const posts=[];for(let d=new Date(y,m,1);d.getMonth()===m;d.setDate(d.getDate()+1)){const p=posteo(iso(d));if(p)posts.push(p)}
@@ -788,15 +833,21 @@ function vIdeas(){
     <input class="f" id="gi-foco" style="flex:1" placeholder="Foco: distribuidores, tienda, Día del Mate, verano…" aria-label="Foco">
     <button class="btn primary" ${S.busy.ideas?'disabled':''}>${S.busy.ideas?'<span class="spin"></span> Pensando':'Generar'}</button></div>
     ${S.ideasResumen?`<details><summary class="small muted">Lo que encontró</summary><div class="pre" style="margin-top:8px">${esc(S.ideasResumen)}</div></details>`:''}</form>`:'';
-  return `${head('Ideas','Las tuyas, las del bot y las que salen de Saber. Cada una se puede mandar a un día del calendario.')}
-  ${gen}<form class="add" id="nueva-idea"><input id="ni-txt" placeholder="Anotar una idea y Enter" aria-label="Nueva idea"></form>
+  const franco=S.rol==='franco';
+  const anotar=franco?`<form class="card" id="nueva-idea"><h2>Anotar una idea</h2>
+    <input class="f" id="ni-txt" placeholder="Qué se te ocurrió" aria-label="Idea">
+    <textarea class="f" id="ni-desc" rows="2" placeholder="Más detalle (opcional): qué se muestra, para qué marca, de dónde salió" aria-label="Detalle"></textarea>
+    <div class="row"><select class="f" id="ni-marca" aria-label="Marca"><option value="ambas">Las dos marcas</option><option value="centenaria">Centenaria</option><option value="latina">LaTiNa</option><option value="cente-azul">Cente Azul</option></select><button class="btn primary">Anotar</button></div></form>`
+    :`<form class="add" id="nueva-idea"><input id="ni-txt" placeholder="Anotar una idea y Enter" aria-label="Nueva idea"></form>`;
+  return `${head('Ideas',franco?'Lo que se te ocurra para las redes. Quedan anotadas a tu nombre y Lautaro las ve.':'Las tuyas, las de Franco, las del bot y las que salen de Saber. Cada una se puede mandar a un día del calendario.')}
+  ${franco?'':gen}${anotar}
   <div class="row between"><span class="count">${lista.length} ideas</span><select class="f" id="filtro-idea" aria-label="Filtro"><option value="abiertas" ${S.filtroIdea==='abiertas'?'selected':''}>Nuevas y elegidas</option><option value="usadas" ${S.filtroIdea==='usadas'?'selected':''}>Usadas y descartadas</option><option value="todas" ${S.filtroIdea==='todas'?'selected':''}>Todas</option></select></div>
   <div class="gauto">${lista.length?lista.map(i=>`<article class="card idea ${i.estado}" data-iid="${i.id}">
-    <div class="card-h"><div class="row">${marcaChip(i.marca)}${i.formato?`<span class="chip">${esc(i.formato)}</span>`:''}${i.pilar?`<span class="chip">${esc(i.pilar)}</span>`:''}</div>${delBtn(i.id)}</div>
+    <div class="card-h"><div class="row">${marcaChip(i.marca)}${i.autor==='franco'&&!franco?'<span class="chip doing">Franco</span>':''}${i.formato?`<span class="chip">${esc(i.formato)}</span>`:''}${i.pilar?`<span class="chip">${esc(i.pilar)}</span>`:''}</div>${delBtn(i.id)}</div>
     <h3>${esc(i.titulo)}</h3>${i.descripcion?`<p>${esc(i.descripcion)}</p>`:''}${i.porque?`<p class="porque">${esc(i.porque)}</p>`:''}
     <div class="row between"><select class="f" id="ie-${i.id}" data-if="estado" aria-label="Estado">${IDEA_EST.map(([k,t])=>`<option value="${k}" ${i.estado===k?'selected':''}>${t}</option>`).join('')}</select>
-    <span class="row"><select class="f" id="iu-${i.id}" aria-label="Día">${dias}</select><button class="btn sm" data-usar="${i.id}">Usar</button></span></div>
-    <span class="when">${esc(i.origen||'propia')} · ${corta(i.creado)}</span></article>`).join(''):'<p class="empty">No hay ideas en este filtro. En Saber hay 67 listas para copiar.</p>'}</div>`;
+    ${franco?'':`<span class="row"><select class="f" id="iu-${i.id}" aria-label="Día">${dias}</select><button class="btn sm" data-usar="${i.id}">Usar</button></span>`}</div>
+    <span class="when">${i.autor==='franco'?(franco?'Anotada por vos':'Anotada por Franco'):esc(i.origen||'propia')} · ${corta(i.creado)}</span></article>`).join(''):`<p class="empty">${franco?'Todavía no anotaste ideas.':'No hay ideas en este filtro. En Saber hay 67 listas para copiar.'}</p>`}</div>`;
 }
 
 /* ===== COMPETENCIA ===== */
@@ -871,7 +922,9 @@ document.addEventListener('submit',async e=>{
   if(f.id==='login'){const pin=$('pin').value.trim();if(!pin)return;$('login-msg').textContent='Entrando…';try{await api('POST','/api/entrar',{pin});await cargar()}catch(err){$('login-msg').textContent=err.message}return}
   if(f.id==='captura'){const v=$('cap-txt').value.trim();if(!v)return;$('cap-txt').value='';await nuevo('nota',{texto:v,origen:'panel',archivada:false});status('Anotado en la bandeja');return}
   if(f.classList.contains('add')&&f.dataset.frente){const inp=f.querySelector('input');const v=inp.value.trim();if(!v)return;inp.value='';await nuevo('tarea',{frente:f.dataset.frente,texto:v,estado:'pendiente',deNahuel:false,hechoEn:null});$('add-'+f.dataset.frente)?.focus();return}
-  if(f.id==='nueva-idea'){const v=$('ni-txt').value.trim();if(!v)return;$('ni-txt').value='';await nuevo('idea',{titulo:v,marca:'ambas',estado:'nueva',origen:'propia'});return}
+  if(f.id==='nueva-idea'){const v=$('ni-txt').value.trim();if(!v){$('ni-txt').focus();return}
+    const datos={titulo:v,marca:$('ni-marca')?.value||'ambas',estado:'nueva',origen:S.rol==='franco'?'Franco':'propia'};const d=$('ni-desc')?.value.trim();if(d)datos.descripcion=d;
+    $('ni-txt').value='';if($('ni-desc'))$('ni-desc').value='';await nuevo('idea',datos);return}
   if(f.id==='nueva-obs'){const v=$('obs-txt').value.trim();if(!v)return;$('obs-txt').value='';const nombre=COMPETIDORES.find(c=>c[0]===S.compSel)[1];await nuevo('obs',{competidor:nombre,texto:v,origen:'propia',fecha:hoyISO()});return}
   if(f.id==='nuevo-evento'){const titulo=$('ev-tit').value.trim(),fecha=$('ev-fecha').value;if(!titulo||!fecha){status('Falta el nombre o la fecha del evento');return}
     await nuevo('evento',{titulo,fecha,marca:$('ev-marca').value,lugar:$('ev-lugar').value.trim()});await cargar();status('Evento agregado');return}
@@ -889,7 +942,7 @@ document.addEventListener('submit',async e=>{
 
 document.addEventListener('click',async e=>{
   const t=e.target.closest('button,[data-vista]');if(!t)return;
-  if(t.classList.contains('aviso-x')){t.closest('.aviso').remove();return}
+  if(t.classList.contains('aviso-x')){cerrarAviso(t.closest('.aviso-w'));return}
   if(t.dataset.vista){S.vista=t.dataset.vista;S.editDoc=false;try{localStorage.setItem('gn-vista',S.vista)}catch(err){}render();window.scrollTo(0,0);return}
   if(t.id==='exportar'||t.id==='exportar-m')return abrirReporte();
   if(t.id==='prev'){semana=addDays(semana,-7);return render()}
