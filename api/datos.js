@@ -1,7 +1,7 @@
 // CRUD de registros. GET trae todo (el volumen es chico y así la web
 // funciona entera con una sola lectura).
 //
-// Franco sólo ve y toca posteos, eventos y SUS ideas: el filtro va acá, no en
+// Franco sólo ve y toca posteos, eventos, tareas compartidas y SUS ideas: el filtro va acá, no en
 // la web, para que con su sesión no se pueda leer ni escribir el resto.
 // El autor de cada registro nuevo lo pone el servidor (`autor` = rol de la
 // sesión), así una idea de Franco queda a su nombre y no se puede falsear.
@@ -14,7 +14,7 @@ import { hoyAR, sumarDias, iso } from '../lib/fechas.mjs';
 import { cuerpo, sinSesion, fallo } from '../lib/http.mjs';
 
 const UUID = /^[0-9a-f-]{36}$/i;
-const TIPOS_FRANCO = ['posteo', 'evento', 'idea'];
+const TIPOS_FRANCO = ['posteo', 'evento', 'idea', 'paso'];
 // Lo que una sesión puede ver y tocar de un registro ya existente.
 const alcanza = (rol, r) => rol === 'lautaro' || (TIPOS_FRANCO.includes(r.tipo) && (r.tipo !== 'idea' || r.autor === rol));
 const tiposDe = (rol) => (rol === 'franco' ? TIPOS_FRANCO : TIPOS);

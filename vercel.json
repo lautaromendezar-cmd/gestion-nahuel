@@ -3,7 +3,8 @@
   "crons": [
     { "path": "/api/cron?tipo=lunes", "schedule": "0 11 * * 1" },
     { "path": "/api/cron?tipo=martes", "schedule": "0 12 * * 2" },
-    { "path": "/api/cron?tipo=viernes", "schedule": "0 20 * * 5" }
+    { "path": "/api/cron?tipo=viernes", "schedule": "0 20 * * 5" },
+    { "path": "/api/cron?tipo=diario", "schedule": "0 11 * * 2-5" }
   ],
   "headers": [
     {

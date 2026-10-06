@@ -228,6 +228,52 @@ button.mc:hover{background:#FAFBFA}
 @media (prefers-reduced-motion:reduce){.aviso,.aviso-w.sale .aviso{animation:aviso-fundido .2s both}.aviso-w.sale .aviso{animation-direction:reverse}.aviso-w{transition:none}.aviso-i.pop{animation:none}}
 @keyframes aviso-fundido{from{opacity:0}to{opacity:1}}
 
+/* semana: alertas, tareas compartidas, próximos eventos, detalle */
+.alertas{background:#FFF8EC;border:1px solid #F1DCB4;border-radius:14px;padding:14px 18px;display:grid;gap:8px}
+.alertas h2{font-size:14px}
+.alertas ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.alertas li{position:relative;padding-left:16px;font-size:13.5px;line-height:1.45}
+.alertas li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;border-radius:50%;background:var(--wait)}
+.alertas li.tarde::before{background:var(--bad)} .alertas li.cerca::before{background:var(--doing)} .alertas li.tema::before{background:#B58A00}
+.evlink{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--fg);text-decoration:underline;text-decoration-color:#C9CACE;text-underline-offset:3px;cursor:pointer;text-align:left}
+.evlink:hover{text-decoration-color:currentColor}
+.evlink.sm{font-weight:600;color:var(--fg2)}
+.av.sm{width:26px;height:26px;font-size:12px}
+.pasos{list-style:none;margin:0;padding:0;display:grid}
+.paso{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:start;padding:9px 4px;border-top:1px solid var(--line)}
+.pasos .paso:first-child{border-top:0}
+.paso input[type=checkbox]{width:18px;height:18px;margin:2px 0 0;accent-color:var(--fg)}
+.paso-t{display:grid;gap:2px;font-size:13.5px;line-height:1.4}
+.paso-m{font-size:11.5px;color:var(--muted)}
+.paso-m .tarde{color:var(--bad);font-weight:600}
+.paso.hecho .paso-t>span:first-child{color:var(--muted);text-decoration:line-through}
+.paso .quien{padding:3px 6px;font-size:12px;border-color:transparent;background:var(--sunk)}
+.nuevo-paso{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;gap:8px;align-items:center}
+.nuevo-paso:not(:has(select+select)){grid-template-columns:minmax(0,1fr) auto auto auto}
+.proxs{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.prox{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);color:var(--fg)}
+button.prox:hover{border-color:#C9CACE}
+.prox.cerca{border-color:var(--fg);box-shadow:0 0 0 3px var(--accent-soft)}
+.prox-n{display:grid;justify-items:center;min-width:46px;padding:6px 4px;border-radius:10px;background:var(--sunk);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.prox-n b{font-size:22px;letter-spacing:-.03em;color:var(--fg);text-transform:none;line-height:1.1}
+.prox.cerca .prox-n{background:var(--fg);color:#C8C9CD} .prox.cerca .prox-n b{color:#fff}
+.prox-t{display:grid;gap:4px;justify-items:start;min-width:0}
+.prox-t b{font-size:14px;line-height:1.3}
+.prog{display:grid;gap:4px;width:100%;margin-top:2px}
+.prog .bar i{background:var(--ok)}
+#modal-ev .modal{align-items:start;overflow-y:auto;padding:6vh 16px}
+#modal-ev .modal.entra{animation:fundido .18s ease-out}
+.ev-sheet{background:var(--surface);border-radius:16px;width:min(680px,100%);padding:22px;display:grid;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.entra .ev-sheet{animation:sube .24s cubic-bezier(.2,.8,.2,1)}
+.evd-tit{font-size:20px;font-weight:800;letter-spacing:-.02em;border-color:transparent;padding-left:0}
+.evd-tit:hover{border-color:var(--line);padding-left:11px}
+.evd-tit:focus{padding-left:11px}
+.plantillas{display:grid;gap:8px;background:var(--bg);border-radius:12px;padding:12px 14px}
+.btn.peligro{background:var(--bad);border-color:var(--bad);color:#fff}
+@keyframes fundido{from{opacity:0}}
+@keyframes sube{from{opacity:0;transform:translateY(14px)}}
+@media (prefers-reduced-motion:reduce){#modal-ev .modal.entra,.entra .ev-sheet{animation:none}}
+
 /* tareas */
 .items{list-style:none;margin:0;padding:0;display:grid;gap:1px}
 .item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:7px 6px;border-radius:8px}
@@ -335,6 +381,10 @@ tr.nuevo td{background:#FAFBFA}
   .item{grid-template-columns:auto minmax(0,1fr)}
   .item .acts{grid-column:2;justify-content:flex-start}
   .head>div{flex:1 1 100%}
+  .nuevo-paso,.nuevo-paso:not(:has(select+select)){grid-template-columns:1fr 1fr}
+  .nuevo-paso>input:first-child{grid-column:1/-1}
+  .paso{grid-template-columns:auto minmax(0,1fr) auto}
+  .paso .quien{grid-column:2;justify-self:start}
   .mes{grid-template-columns:1fr}
   .mes .dh,.mc.fuera,.mc.finde:not(.confecha){display:none}
   .mc{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:center;border-top:0;border-left:4px solid transparent}
@@ -351,6 +401,7 @@ tr.nuevo td{background:#FAFBFA}
 <div id="app"></div>
 <div id="tip" hidden></div>
 <div id="avisos" aria-live="polite"></div>
+<div id="modal-ev"></div>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -395,8 +446,8 @@ async function api(method,path,body){
 function status(t){document.querySelectorAll('.status').forEach(el=>el.textContent=t)}
 const hora=()=>new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 const NOMBRE={lautaro:'Lautaro',franco:'Franco'};
-const SEGUIDOS=['posteo','evento','idea'];
-function queEs(r){return r.tipo==='posteo'?`la publicación del ${corta(r.fecha||r.clave)}`:r.tipo==='evento'?`el evento «${r.titulo}»`:r.tipo==='idea'?`la idea «${r.titulo}»`:'un registro'}
+const SEGUIDOS=['posteo','evento','idea','paso'];
+function queEs(r){return r.tipo==='posteo'?`la publicación del ${corta(r.fecha||r.clave)}`:r.tipo==='evento'?`el evento «${r.titulo}»`:r.tipo==='idea'?`la idea «${r.titulo}»`:r.tipo==='paso'?`la tarea «${r.texto}»`:'un registro'}
 async function cargar(){
   const d=await api('GET','/api/datos');
   if(S.rol&&S.rol!==d.rol)$('app').innerHTML='';
@@ -405,9 +456,10 @@ async function cargar(){
     const vistos=new Map(S.regs.filter(r=>SEGUIDOS.includes(r.tipo)&&!String(r.id).startsWith('tmp-')).map(r=>[r.id,r]));
     const nuevos=d.registros.filter(r=>SEGUIDOS.includes(r.tipo));
     const msgs=[];
-    for(const r of nuevos){const v=vistos.get(r.id);if(r.editadoPor&&r.editadoPor!==d.rol&&(!v||v.actualizado!==r.actualizado))msgs.push(`${NOMBRE[r.editadoPor]||r.editadoPor} ${v?'cambió':'cargó'} ${queEs(r)}`)}
+    for(const r of nuevos){const v=vistos.get(r.id);if(r.editadoPor&&r.editadoPor!==d.rol&&(!v||v.actualizado!==r.actualizado)){const quien=NOMBRE[r.editadoPor]||r.editadoPor;
+      msgs.push(r.tipo==='paso'&&r.hecho&&v&&!v.hecho?`${quien} terminó ${queEs(r)}`:r.tipo==='paso'&&!v&&r.quien===d.rol?`${quien} te asignó ${queEs(r)}`:`${quien} ${v?'cambió':'cargó'} ${queEs(r)}`)}}
     const ids=new Set(nuevos.map(r=>r.id));
-    for(const v of vistos.values())if(!ids.has(v.id)&&v.tipo==='evento')msgs.push(`Se borró ${queEs(v)}`);
+    for(const v of vistos.values())if(!ids.has(v.id)&&(v.tipo==='evento'||v.tipo==='paso'))msgs.push(`Se borró ${queEs(v)}`);
     if(msgs.length)aviso('info',msgs.slice(0,3).join(' · ')+(msgs.length>3?` y ${msgs.length-3} cambios más`:''));
   }
   Object.assign(S,{regs:d.registros,meta:d.meta,ia:d.ia,rol:d.rol,logueado:true});
@@ -454,11 +506,12 @@ function fallaGuardado(el,e,verbo='se guardó'){
   if(e.status===404){resolverAviso(el,'info',e.message);cargar().catch(()=>{});return}
   resolverAviso(el,'error',`No ${verbo}: ${e.message}. Recargué los datos de la base.`);cargar().catch(()=>{});
 }
-async function nuevo(tipo,datos){
-  status('Guardando…');const el=aviso('guardando','Guardando…');
+// silencioso: sin aviso si sale bien (para cargas en tanda, como una plantilla); si falla, avisa igual.
+async function nuevo(tipo,datos,{silencioso=false}={}){
+  status('Guardando…');const el=silencioso?null:aviso('guardando','Guardando…');
   try{const r=await api('POST','/api/datos',{tipo,datos});
     if(!r.id||!coincide(r,datos))throw new Error('la base no devolvió lo que mandaste');
-    S.regs.push(r);render();status('Guardado '+hora());resolverAviso(el,'ok','Guardado en la base · '+hora());return r}
+    S.regs.push(r);render();status('Guardado '+hora());if(!silencioso)resolverAviso(el,'ok','Guardado en la base · '+hora());return r}
   catch(e){status('No se guardó: '+e.message);fallaGuardado(el,e)}
 }
 // `antes`: cómo veía la persona los campos que cambió. Si otro los tocó en el
@@ -508,7 +561,7 @@ const fechasDe=f=>(S.meta.fechas||[]).filter(x=>x.fecha===f);
 const fchChips=f=>{const l=fechasDe(f);return l.length?`<div class="fchs">${l.map(x=>`<span class="fch ${x.tipo}" title="${esc(TIPO_F[x.tipo])}">${esc(x.titulo)}</span>`).join('')}</div>`:''};
 function faltan(f){const n=Math.round((parse(f)-parse(hoyISO()))/864e5);return n===0?'hoy':n===1?'mañana':n<0?'pasó':`en ${n} días`}
 function listaFechas(dias,{borrar=false}={}){const hoy=hoyISO(),lim=iso(addDays(new Date(),dias));const l=(S.meta.fechas||[]).filter(x=>x.fecha>=hoy&&x.fecha<=lim);
-  return l.length?`<ul class="flist">${l.map(x=>`<li><span><span class="fd">${corta(x.fecha)}</span><br><span class="fq">${faltan(x.fecha)}</span></span><span><span class="fch ${x.tipo}">${esc(TIPO_F[x.tipo])}</span> <b style="font-size:13.5px">${esc(x.titulo)}</b>${x.lugar||x.marca&&x.marca!=='ambas'?`<br><span class="fq">${[x.marca&&S.meta.marcas[x.marca],x.lugar].filter(Boolean).map(esc).join(' · ')}</span>`:''}</span>${borrar&&x.id?delBtn(x.id):'<span></span>'}</li>`).join('')}</ul>`:'<p class="empty">Nada en este período.</p>'}
+  return l.length?`<ul class="flist">${l.map(x=>`<li><span><span class="fd">${corta(x.fecha)}</span><br><span class="fq">${faltan(x.fecha)}</span></span><span><span class="fch ${x.tipo}">${esc(TIPO_F[x.tipo])}</span> ${x.id?`<button class="evlink" data-ev="${x.id}">${esc(x.titulo)}</button>`:`<b style="font-size:13.5px">${esc(x.titulo)}</b>`}${x.lugar||x.marca&&x.marca!=='ambas'?`<br><span class="fq">${[x.marca&&S.meta.marcas[x.marca],x.lugar].filter(Boolean).map(esc).join(' · ')}</span>`:''}</span>${borrar&&x.id?delBtn(x.id):'<span></span>'}</li>`).join('')}</ul>`:'<p class="empty">Nada en este período.</p>'}
 const diasSemana=l=>[0,1,2,3,4].map(i=>iso(addDays(l,i)));
 
 /* ===== gráficos (SVG a mano, una serie, tooltip propio) ===== */
@@ -567,6 +620,7 @@ document.addEventListener('mousemove',e=>{const t=e.target.closest?.('[data-tip]
 /* ===== render ===== */
 const ICO={
   hoy:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  semana:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 13h3M8 17h8M15 13h1"/>',
   calendario:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   tareas:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
   ads:'<path d="M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/>',
@@ -578,14 +632,15 @@ const ICO={
   bandeja:'<path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1 3h6l1-3h5"/>',
   contactos:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
 };
-const GRUPOS_LAUTARO=[['Operación',[['hoy','Hoy'],['calendario','Calendario'],['tareas','Tareas'],['ads','Meta Ads'],['metricas','Métricas']]],['Estrategia',[['ideas','Ideas'],['competencia','Competencia'],['saber','Saber'],['preguntar','Preguntar']]],['Registro',[['bandeja','Bandeja'],['contactos','Contactos']]]];
+const GRUPOS_LAUTARO=[['Operación',[['hoy','Hoy'],['semana','Semana'],['calendario','Calendario'],['tareas','Tareas'],['ads','Meta Ads'],['metricas','Métricas']]],['Estrategia',[['ideas','Ideas'],['competencia','Competencia'],['saber','Saber'],['preguntar','Preguntar']]],['Registro',[['bandeja','Bandeja'],['contactos','Contactos']]]];
 // Franco ve sólo publicaciones y calendario; el servidor tampoco le manda el resto.
-const GRUPOS_FRANCO=[['Publicaciones',[['calendario','Calendario'],['ideas','Ideas']]]];
+const GRUPOS_FRANCO=[['Publicaciones',[['semana','Semana'],['calendario','Calendario'],['ideas','Ideas']]]];
 const grupos=()=>S.rol==='franco'?GRUPOS_FRANCO:GRUPOS_LAUTARO;
 const vistaPermitida=v=>grupos().some(g=>g[1].some(([k])=>k===v));
 const yo=()=>S.rol==='franco'?'Franco':'Lautaro';
 function badges(){
-  return {bandeja:[de('nota').filter(n=>!n.archivada).length,true],ideas:[de('idea').filter(i=>i.estado==='nueva').length],tareas:[de('tarea').filter(t=>t.estado!=='hecho'&&!t.deNahuel).length]};
+  const mias=misPasos();
+  return {semana:[mias.length,mias.some(p=>p.fecha<hoyISO())],bandeja:[de('nota').filter(n=>!n.archivada).length,true],ideas:[de('idea').filter(i=>i.estado==='nueva').length],tareas:[de('tarea').filter(t=>t.estado!=='hecho'&&!t.deNahuel).length]};
 }
 function navHTML(){
   const b=badges();
@@ -604,17 +659,29 @@ function shell(){return `<div class="app">
   </div></div>`}
 // soltar=true: no conservar lo que había en el campo activo (después de un
 // conflicto tiene que verse lo que quedó en la base, no lo que se escribió).
+// Si un redibujado saca de la página un campo con foco, el navegador dispara su
+// "change" en medio del innerHTML; ese change vuelve a llamar a render(). El
+// segundo espera a que termine el primero en vez de pisarlo.
+let dibujando=false,modalPrevio=null;
 function render(soltar=false){
+  if(dibujando){queueMicrotask(()=>render());return}
+  dibujando=true;
+  try{dibujar(soltar)}finally{dibujando=false}
+}
+function dibujar(soltar){
   const app=$('app');
-  if(!S.logueado){app.innerHTML=vLogin();return}
+  if(!S.logueado){app.innerHTML=vLogin();$('modal-ev').innerHTML='';S.evAbierto=null;return}
   const a=document.activeElement;let keep=null;
   // Sin blur: soltar el foco dispararía otro "change" con el texto viejo.
   if(!soltar&&a&&a.id&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))keep={id:a.id,val:a.value,s:a.selectionStart,e:a.selectionEnd};
   if(!$('vista'))app.innerHTML=shell();
   if(!vistaPermitida(S.vista))S.vista=grupos()[0][1][0][0];
   const nav=navHTML();$('nav-side').innerHTML=nav;$('nav-top').innerHTML=grupos().flatMap(g=>g[1]).map(([k,t])=>`<button class="nav" data-vista="${k}" ${S.vista===k?'aria-current="page"':''}>${t}</button>`).join('');
-  const V={hoy:vHoy,calendario:()=>S.calVista==='mes'?vMes():vCalendario(),tareas:vTareas,ads:vAds,metricas:vMetricas,ideas:vIdeas,competencia:vCompetencia,saber:vSaber,preguntar:vPreguntar,bandeja:vBandeja,contactos:vContactos}[S.vista]||vHoy;
+  const V={hoy:vHoy,semana:vSemana,calendario:()=>S.calVista==='mes'?vMes():vCalendario(),tareas:vTareas,ads:vAds,metricas:vMetricas,ideas:vIdeas,competencia:vCompetencia,saber:vSaber,preguntar:vPreguntar,bandeja:vBandeja,contactos:vContactos}[S.vista]||vHoy;
   $('vista').innerHTML=V();
+  // La animación de entrada sólo la primera vez: cada guardado redibuja el detalle.
+  const recien=S.evAbierto&&S.evAbierto!==modalPrevio;modalPrevio=S.evAbierto;
+  $('modal-ev').innerHTML=S.evAbierto?vEvento(recien):'';
   document.querySelectorAll('[data-md]').forEach(el=>{try{el.innerHTML=DOMPurify.sanitize(marked.parse(el.textContent))}catch(e){}el.removeAttribute('data-md')});
   if(keep){const el=$(keep.id);if(el){if(el.tagName!=='SELECT')el.value=keep.val;el.focus();try{el.setSelectionRange(keep.s,keep.e)}catch(e){}}}
 }
@@ -649,7 +716,7 @@ function vHoy(){
     return `<div class="kpi"><div class="row between"><span class="label">${esc(c.red)}</span>${marcaChip(c.marca)}</div><div class="v num">${ult?fmt(ult.seguidores):'—'}</div>
     <div class="row between"><span class="d">${ult?'al '+corta(ult.fecha):'sin cargar'}</span>${d!=null?`<span class="delta ${d>=0?'up':'down'}">${d>=0?'+':''}${fmt(d)} en 7 días</span>`:''}</div>${sparkline(s.slice(-12).map(m=>m.seguidores))}</div>`}).join('');
   return `${head('Hola, Lautaro','Esto es lo que tenés hoy con LaTiNa y Centenaria.')}
-  ${hero}${martes}
+  ${hero}${martes}${alertasHTML()}
   <div class="g4">
     <div class="kpi"><span class="label">Publicaciones de la semana</span><div class="v num">${pub}<small> / ${mios.length}</small></div><div class="bar"><i style="width:${mios.length?pub/mios.length*100:0}%"></i></div><span class="d">${dist?'Pieza de distribución: lista':'<b style="color:var(--wait)">Falta la pieza de distribución</b>'}</span></div>
     <div class="kpi ${camp?'':'warn'}"><span class="label">Meta Ads</span>${camp?`<div class="v num">${pesos(camp.gasto)}</div><span class="d">${esc(camp.nombre||'Campaña')} · ${fmt(camp.consultas)} consultas · ${restan<=0?'<b style="color:var(--wait)">termina hoy</b>':`quedan ${restan} días`}</span>`:`<div class="v" style="font-size:19px">Sin campaña activa</div><span class="d">Las campañas son de 7 días encadenadas.</span>`}</div>
@@ -665,6 +732,94 @@ function vHoy(){
   <section class="card espera"><div class="card-h"><h2>Esperando a Nahuel</h2><span class="count">${espera.length}</span></div><ul class="lst">${espera.length?espera.map(t=>`<li><span class="fr">${esc(frenteNombre(t.frente))}</span><span>${esc(t.texto)}</span></li>`).join(''):'<li class="empty">Nada pendiente de su lado.</li>'}</ul></section>
   <section style="display:grid;gap:12px"><div class="card-h"><h2>Seguidores</h2><button class="btn sm" data-vista="metricas">Cargar o ver evolución</button></div><div class="g3">${tiles}</div></section>
   <form class="card" id="captura"><h3>Anotar rápido</h3><div class="add"><input id="cap-txt" placeholder="Un teléfono, una idea, algo que te dijo Nahuel… va a la bandeja" aria-label="Nota rápida"><button class="btn primary">Anotar</button></div></form>`;
+}
+
+/* ===== TAREAS COMPARTIDAS (tipo 'paso') =====
+   Las ven y las tildan los dos. Cada una tiene responsable (quien), fecha y,
+   si es parte de un evento, eventoId. Las Tareas de Lautaro siguen aparte. */
+const PERSONAS={lautaro:'Lautaro',franco:'Franco'};
+const PLANTILLAS={
+  sorteo:['Sorteo',[[-7,'Definir premio, bases y cuentas que participan'],[-5,'Armar la pieza del sorteo'],[-4,'Publicar el sorteo con las bases'],[-1,'Historia: último día para participar'],[0,'Cerrar y elegir al ganador'],[1,'Anunciar al ganador y coordinar la entrega']]],
+  expo:['Expo o feria',[[-10,'Confirmar lugar, horarios y quién va'],[-5,'Pieza de aviso: dónde y cuándo'],[-1,'Historias: mañana estamos en…'],[0,'Cobertura en vivo en historias'],[2,'Posteo con las fotos']]],
+  lanzamiento:['Lanzamiento',[[-10,'Fotos del producto'],[-5,'Adelanto en historias'],[0,'Posteo de lanzamiento'],[3,'Reel o UGC con el producto']]],
+};
+const dias_=f=>Math.round((parse(f)-parse(hoyISO()))/864e5);
+function cuando(f){const n=dias_(f);return n===0?'hoy':n===1?'mañana':n===-1?'ayer':n<0?`hace ${-n} días`:`en ${n} días`}
+const finSemana=()=>iso(addDays(lunes(new Date()),7));
+// Las mías sin hacer hasta el domingo (atrasadas incluidas): el número del menú.
+const misPasos=()=>de('paso').filter(p=>!p.hecho&&p.quien===S.rol&&p.fecha&&p.fecha<finSemana());
+const pasosDeEvento=id=>de('paso').filter(p=>p.eventoId===id).sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
+function pasoHTML(p,{evento=true}={}){
+  const ev=evento&&p.eventoId&&buscar(p.eventoId);const atr=!p.hecho&&p.fecha&&p.fecha<hoyISO();
+  return `<li class="paso ${p.hecho?'hecho':''} ${atr?'atr':''}" data-pid="${p.id}">
+    <input type="checkbox" data-pchk ${p.hecho?'checked':''} aria-label="Hecha">
+    <span class="paso-t"><span>${esc(p.texto)}</span><span class="paso-m">${p.fecha?`<span class="${atr?'tarde':''}">${corta(p.fecha)} · ${atr?'atrasada':cuando(p.fecha)}</span>`:'sin fecha'}${ev?` · <button class="evlink sm" data-ev="${ev.id}">${esc(ev.titulo)}</button>`:''}${p.hecho&&p.hechoPor?` · hecha por ${esc(PERSONAS[p.hechoPor]||p.hechoPor)}`:''}</span></span>
+    <select class="f quien" id="pq-${p.id}" data-pq aria-label="Responsable">${Object.entries(PERSONAS).map(([k,t])=>`<option value="${k}" ${p.quien===k?'selected':''}>${t}</option>`).join('')}</select>
+    ${delBtn(p.id)}</li>`;
+}
+function formPaso(id,{eventoId='',fecha=hoyISO()}={}){
+  const evs=de('evento').filter(e=>e.fecha>=hoyISO()).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  return `<form class="nuevo-paso" data-form-paso="${id}" data-evento="${eventoId}">
+    <input class="f" id="${id}-t" placeholder="Agregar una tarea" aria-label="Tarea">
+    <input class="f" type="date" id="${id}-f" value="${fecha}" aria-label="Fecha">
+    <select class="f" id="${id}-q" aria-label="Responsable">${Object.entries(PERSONAS).map(([k,t])=>`<option value="${k}" ${S.rol===k?'selected':''}>${t}</option>`).join('')}</select>
+    ${eventoId?'':`<select class="f" id="${id}-e" aria-label="Evento"><option value="">Sin evento</option>${evs.map(e=>`<option value="${e.id}">${esc(e.titulo)} (${corta(e.fecha)})</option>`).join('')}</select>`}
+    <button class="btn primary">Agregar</button></form>`;
+}
+// Lo que hay que mirar ya: atrasadas, eventos a 7 días o menos y publicaciones cercanas sin tema.
+function alertasHTML(){
+  const hoy=hoyISO();const l=[];
+  const atr=de('paso').filter(p=>!p.hecho&&p.fecha&&p.fecha<hoy).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  for(const p of atr)l.push(['tarde',`<b>Atrasada${p.quien===S.rol?'':' de '+esc(PERSONAS[p.quien])}:</b> ${esc(p.texto)} <span class="muted">(era para el ${corta(p.fecha)})</span>`]);
+  for(const e of de('evento').filter(e=>e.fecha>=hoy&&dias_(e.fecha)<=7).sort((a,b)=>a.fecha.localeCompare(b.fecha))){
+    const ps=pasosDeEvento(e.id);const h=ps.filter(p=>p.hecho).length;
+    l.push(['cerca',`<button class="evlink" data-ev="${e.id}">${esc(e.titulo)}</button> es <b>${cuando(e.fecha)}</b> (${corta(e.fecha)})${ps.length?` · ${h} de ${ps.length} tareas hechas`:' · sin tareas cargadas'}`]);
+  }
+  let d=new Date(),n=0;while(n<3){const f=iso(d);const p=posteo(f);if(p){n++;if(!p.tema)l.push(['tema',`La publicación del <b>${corta(f)}</b> (${esc(S.meta.marcas[p.marca])}) todavía no tiene tema`])}d=addDays(d,1)}
+  if(!l.length)return '';
+  return `<section class="alertas" aria-label="Para mirar"><h2>Para mirar</h2><ul>${l.map(([t,h])=>`<li class="${t}">${h}</li>`).join('')}</ul></section>`;
+}
+function vSemana(){
+  const dias=diasSemana(semana);const desde=dias[0],hasta=iso(addDays(semana,7));const hoy=hoyISO();
+  const actual=iso(semana)===iso(lunes(new Date()))||iso(semana)===iso(semanaInicial());
+  const orden=S.rol==='franco'?['franco','lautaro']:['lautaro','franco'];
+  const cols=orden.map(q=>{
+    const ab=de('paso').filter(p=>p.quien===q&&!p.hecho&&p.fecha&&p.fecha<hasta&&(p.fecha>=desde||(actual&&p.fecha<hoy))).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+    const he=de('paso').filter(p=>p.quien===q&&p.hecho&&p.fecha>=desde&&p.fecha<hasta);
+    const k='sem-'+q;const o=!!S.open[k];
+    return `<section class="card"><div class="card-h"><div class="row"><span class="av sm">${PERSONAS[q][0]}</span><h2>${q===S.rol?'Vos':PERSONAS[q]}</h2></div><span class="count">${ab.length}</span></div>
+      <ul class="pasos">${ab.length?ab.map(x=>pasoHTML(x)).join(''):'<li class="empty">Nada pendiente esta semana.</li>'}</ul>
+      ${he.length?`<button class="toggle-done" data-toggle="${k}" aria-expanded="${o}">${o?'▾':'▸'} Hechas (${he.length})</button>${o?`<ul class="pasos">${he.map(x=>pasoHTML(x)).join('')}</ul>`:''}`:''}</section>`}).join('');
+  const prox=(S.meta.fechas||[]).filter(x=>x.fecha>=hoy&&dias_(x.fecha)<=30);
+  const proxHTML=prox.length?`<div class="gauto proxs">${prox.map(x=>{const ev=x.id&&buscar(x.id);const ps=ev?pasosDeEvento(ev.id):[];const h=ps.filter(p=>p.hecho).length;const n=dias_(x.fecha);
+    return `<${ev?'button':'div'} class="prox ${n<=7?'cerca':''}" ${ev?`data-ev="${ev.id}"`:''}><span class="prox-n"><b class="num">${n===0?'Hoy':n}</b>${n===0?'':n===1?'día':'días'}</span>
+      <span class="prox-t"><span class="fch ${x.tipo}">${esc(TIPO_F[x.tipo])}</span><b>${esc(x.titulo)}</b><span class="muted small">${corta(x.fecha)}${x.marca&&x.marca!=='ambas'?' · '+esc(S.meta.marcas[x.marca]||''):''}</span>
+      ${ev?`<span class="prog"><span class="bar"><i style="width:${ps.length?h/ps.length*100:0}%"></i></span><span class="small muted">${ps.length?`${h} de ${ps.length} tareas`:'Sin tareas: tocá para cargarlas'}</span></span>`:''}</span></${ev?'button':'div'}>`}).join('')}</div>`:'<p class="empty">Nada en los próximos 30 días.</p>';
+  const tira=`<div class="g5">${dias.map(f=>{const x=posteo(f);return `<button class="day ${f===hoy?'hoy':''}" data-irsemana="${f}"><span class="dn">${DIAS[parse(f).getDay()]} ${parse(f).getDate()}</span>${marcaChip(x.marca)}<span class="tt ${x.tema?'':'no'}">${x.tema?esc(x.tema):'Sin tema'}</span>${fchChips(f)}<span class="row">${x.eje?`<span class="chip">${esc(S.meta.ejes[x.eje])}</span>`:''}<span class="chip ${EST_CHIP[x.estado]||''}">${esc(ESTADOS_POST.find(e=>e[0]===x.estado)?.[1]||x.estado)}</span></span></button>`}).join('')}</div>`;
+  return `${head(S.rol==='franco'?'Hola, Franco':'Semana','Lo que tenemos que hacer los dos esta semana y lo que se viene.',
+    `<div class="row"><button class="iconbtn" id="prev" aria-label="Semana anterior">‹</button><b class="num" style="min-width:12em;text-align:center">${lblSemana(semana)}</b><button class="iconbtn" id="next" aria-label="Semana siguiente">›</button><button class="btn sm" id="hoy">Esta semana</button></div>`)}
+  ${alertasHTML()}
+  <section style="display:grid;gap:12px"><div class="card-h"><h2>Para hacer</h2><span class="small muted">Tildala cuando esté: el otro lo ve al instante</span></div>
+    <div class="g2">${cols}</div>
+    <div class="card">${formPaso('np')}</div></section>
+  <section class="card"><div class="card-h"><h2>Publicaciones</h2><span class="small muted">Tocá un día para editarlo</span></div>${tira}</section>
+  <section style="display:grid;gap:12px"><div class="card-h"><h2>Se viene</h2><button class="btn sm" data-nuevo-ev="1">Cargar un evento</button></div>${proxHTML}</section>`;
+}
+function vEvento(recien){
+  const e=buscar(S.evAbierto);if(!e||e.tipo!=='evento'){S.evAbierto=null;return ''}
+  const ps=pasosDeEvento(e.id);const h=ps.filter(p=>p.hecho).length;const n=dias_(e.fecha);
+  return `<div class="modal ${recien?'entra':''}" data-cerrar-ev><div class="ev-sheet" role="dialog" aria-modal="true" aria-labelledby="evd-tit">
+    <div class="card-h"><span class="label">Evento · ${n<0?'pasó':cuando(e.fecha)}</span><button class="iconbtn" data-cerrar-ev aria-label="Cerrar">×</button></div>
+    <input class="f evd-tit" id="evd-tit" data-evf="titulo" value="${esc(e.titulo)}" aria-label="Nombre del evento">
+    <div class="row"><input class="f" type="date" id="evd-fecha" data-evf="fecha" value="${esc(e.fecha)}" aria-label="Fecha">
+      <select class="f" id="evd-marca" data-evf="marca" aria-label="Marca">${[['ambas','Las dos'],['centenaria','Centenaria'],['latina','LaTiNa'],['cente-azul','Cente Azul']].map(([k,t])=>`<option value="${k}" ${e.marca===k?'selected':''}>${t}</option>`).join('')}</select>
+      <input class="f" style="flex:1" id="evd-lugar" data-evf="lugar" value="${esc(e.lugar)}" placeholder="Lugar o nota" aria-label="Lugar"></div>
+    <div class="card-h"><h3>Tareas ${ps.length?`<span class="count">${h} de ${ps.length}</span>`:''}</h3></div>
+    ${ps.length?`<ul class="pasos">${ps.map(p=>pasoHTML(p,{evento:false})).join('')}</ul>`
+      :`<div class="plantillas"><p class="small muted">Cargá los pasos típicos con las fechas calculadas desde el ${corta(e.fecha)}, y después ajustá lo que haga falta:</p><div class="row">${Object.entries(PLANTILLAS).map(([k,[t]])=>`<button class="btn sm" data-plantilla="${k}">${t}</button>`).join('')}</div></div>`}
+    ${formPaso('ep',{eventoId:e.id,fecha:e.fecha})}
+    <div class="row between"><span class="small muted">${e.autor?'Lo cargó '+esc(PERSONAS[e.autor]||e.autor):''}</span><button class="btn sm ${S.armed===e.id?'peligro':''}" data-borrar-ev="${e.id}">${S.armed===e.id?'¿Borrar el evento y sus tareas?':'Borrar evento'}</button></div>
+  </div></div>`;
 }
 
 /* ===== CALENDARIO ===== */
@@ -926,8 +1081,13 @@ document.addEventListener('submit',async e=>{
     const datos={titulo:v,marca:$('ni-marca')?.value||'ambas',estado:'nueva',origen:S.rol==='franco'?'Franco':'propia'};const d=$('ni-desc')?.value.trim();if(d)datos.descripcion=d;
     $('ni-txt').value='';if($('ni-desc'))$('ni-desc').value='';await nuevo('idea',datos);return}
   if(f.id==='nueva-obs'){const v=$('obs-txt').value.trim();if(!v)return;$('obs-txt').value='';const nombre=COMPETIDORES.find(c=>c[0]===S.compSel)[1];await nuevo('obs',{competidor:nombre,texto:v,origen:'propia',fecha:hoyISO()});return}
-  if(f.id==='nuevo-evento'){const titulo=$('ev-tit').value.trim(),fecha=$('ev-fecha').value;if(!titulo||!fecha){status('Falta el nombre o la fecha del evento');return}
-    await nuevo('evento',{titulo,fecha,marca:$('ev-marca').value,lugar:$('ev-lugar').value.trim()});await cargar();status('Evento agregado');return}
+  if(f.id==='nuevo-evento'){const titulo=$('ev-tit').value.trim(),fecha=$('ev-fecha').value;if(!titulo||!fecha){aviso('error','Falta el nombre o la fecha del evento');return}
+    const r=await nuevo('evento',{titulo,fecha,marca:$('ev-marca').value,lugar:$('ev-lugar').value.trim()});await cargar();
+    // recién creado: se abre para cargarle las tareas
+    if(r){S.evAbierto=r.id;render()}return}
+  if(f.dataset.formPaso){const id=f.dataset.formPaso;const texto=$(id+'-t').value.trim();if(!texto){$(id+'-t').focus();return}
+    const datos={texto,fecha:$(id+'-f').value||null,quien:$(id+'-q').value,hecho:false};const ev=f.dataset.evento||$(id+'-e')?.value;if(ev)datos.eventoId=ev;
+    $(id+'-t').value='';await nuevo('paso',datos);$(id+'-t')?.focus();return}
   if(f.id==='carga-met'||f.id==='carga-comp'){
     const fecha=f.id==='carga-met'?$('met-fecha').value||hoyISO():hoyISO();let n=0;
     for(const inp of f.querySelectorAll('[data-met-in]')){const v=nmb(inp.value.replace(/k$/i,'000'));if(!v)continue;n++;await porClave('metrica',`${inp.dataset.metIn}_${fecha}`,{cuenta:inp.dataset.metIn,fecha,seguidores:v})}
@@ -943,6 +1103,15 @@ document.addEventListener('submit',async e=>{
 document.addEventListener('click',async e=>{
   const t=e.target.closest('button,[data-vista]');if(!t)return;
   if(t.classList.contains('aviso-x')){cerrarAviso(t.closest('.aviso-w'));return}
+  if(t.dataset.ev){S.evAbierto=t.dataset.ev;S.armed=null;return render()}
+  if(t.hasAttribute('data-cerrar-ev')&&t.tagName==='BUTTON')return cerrarEvento();
+  if(t.dataset.nuevoEv){S.vista='calendario';S.calVista='semana';render();$('ev-tit')?.scrollIntoView({block:'center'});$('ev-tit')?.focus();return}
+  if(t.dataset.plantilla){const e=buscar(S.evAbierto);if(!e)return;const [nombre,pasos]=PLANTILLAS[t.dataset.plantilla];
+    const el=aviso('guardando',`Cargando las tareas de «${nombre}»…`);let n=0;
+    for(const [d,texto] of pasos)if(await nuevo('paso',{texto,fecha:iso(addDays(parse(e.fecha),d)),quien:S.rol,hecho:false,eventoId:e.id},{silencioso:true}))n++;
+    resolverAviso(el,n===pasos.length?'ok':'error',n===pasos.length?`${n} tareas de «${nombre}» guardadas en la base. Cambiá el responsable donde haga falta.`:`Se guardaron ${n} de ${pasos.length} tareas. Revisá cuáles faltan.`);return}
+  if(t.dataset.borrarEv){const id=t.dataset.borrarEv;if(!armar(id))return;S.evAbierto=null;
+    for(const p of pasosDeEvento(id))await quitar(p.id);await quitar(id);await cargar();return}
   if(t.dataset.vista){S.vista=t.dataset.vista;S.editDoc=false;try{localStorage.setItem('gn-vista',S.vista)}catch(err){}render();window.scrollTo(0,0);return}
   if(t.id==='exportar'||t.id==='exportar-m')return abrirReporte();
   if(t.id==='prev'){semana=addDays(semana,-7);return render()}
@@ -952,7 +1121,7 @@ document.addEventListener('click',async e=>{
   if(t.id==='mhoy'){const d=new Date();mesCal=new Date(d.getFullYear(),d.getMonth(),1);return render()}
   if(t.dataset.calv){S.calVista=t.dataset.calv;try{localStorage.setItem('gn-cal',S.calVista)}catch(err){}
     if(S.calVista==='mes'){const d=addDays(semana,2);mesCal=new Date(d.getFullYear(),d.getMonth(),1)}return render()}
-  if(t.dataset.irsemana){semana=lunes(parse(t.dataset.irsemana));S.calVista='semana';try{localStorage.setItem('gn-cal','semana')}catch(err){}render();window.scrollTo(0,0);return}
+  if(t.dataset.irsemana){semana=lunes(parse(t.dataset.irsemana));S.calVista='semana';S.vista='calendario';try{localStorage.setItem('gn-cal','semana')}catch(err){}render();window.scrollTo(0,0);return}
   if(t.id==='salir'||t.id==='salir-m'){try{await api('DELETE','/api/entrar')}catch(err){}S.logueado=false;S.regs=[];return render()}
   if(t.dataset.del){if(armar(t.dataset.del)){const ev=buscar(t.dataset.del)?.tipo==='evento';await quitar(t.dataset.del);if(ev)cargar()}return}
   if(t.dataset.toggle){S.open[t.dataset.toggle]=!S.open[t.dataset.toggle];return render()}
@@ -994,8 +1163,11 @@ document.addEventListener('click',async e=>{
   if(t.dataset.bandejaResp){const c=S.chat[t.dataset.bandejaResp];await nuevo('nota',{texto:`${c.q}\n\n${c.a}`,origen:'Claude',archivada:false});status('Mandado a la bandeja');return}
 });
 
-document.addEventListener('change',e=>{
+document.addEventListener('change',async e=>{
   const el=e.target;
+  if(el.matches('[data-pchk]')){const id=el.closest('[data-pid]').dataset.pid;return cambiar(id,el.checked?{hecho:true,hechoEn:new Date().toISOString(),hechoPor:S.rol}:{hecho:false,hechoEn:null,hechoPor:null})}
+  if(el.matches('[data-pq]')){const id=el.closest('[data-pid]').dataset.pid;return cambiar(id,{quien:el.value})}
+  if(el.dataset.evf){const e=buscar(S.evAbierto);if(!e)return;const v=el.value.trim();if(el.dataset.evf!=='lugar'&&!v)return;await cambiar(e.id,{[el.dataset.evf]:v});if(el.dataset.evf==='fecha'||el.dataset.evf==='titulo')cargar().catch(()=>{});return}
   if(el.dataset.pf){const f=el.closest('[data-fecha]').dataset.fecha;const p=posteo(f);const v=el.value.trim();if(v===(p[el.dataset.pf]??''))return;
     return porClave('posteo',f,{marca:p.marca,aCargo:p.aCargo,fecha:f,[el.dataset.pf]:v},vistoAntes('posteo',f,[el.dataset.pf]))}
   if(el.dataset.uf){const s=el.closest('[data-ugc]');return porClave('ugc',s.dataset.ugc,{mes:s.dataset.ugc.slice(0,7),quien:s.dataset.quien,marca:s.dataset.marca,[el.dataset.uf]:el.value.trim()})}
@@ -1007,7 +1179,12 @@ document.addEventListener('change',e=>{
   if(el.id==='filtro-rubro'){S.filtroRubro=el.value;return render()}
   if(el.id==='filtro-idea'){S.filtroIdea=el.value;return render()}
 });
+// Al cerrar el detalle se saca el foco primero: así el campo que se estaba
+// editando dispara su "change" y se guarda antes de desaparecer.
+function cerrarEvento(){document.activeElement?.blur?.();S.evAbierto=null;render()}
+document.addEventListener('mousedown',e=>{if(e.target.matches?.('#modal-ev .modal'))cerrarEvento()});
 document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&S.evAbierto){cerrarEvento();return}
   if(e.key==='Enter'&&e.target.matches('textarea.txt')){e.preventDefault();e.target.blur()}
   if(e.key==='Enter'&&e.target.closest('tr.nuevo')){e.preventDefault();$('nc-add').click()}
 });
