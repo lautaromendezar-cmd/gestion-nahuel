@@ -265,7 +265,7 @@ function render(soltar=false){
 }
 function dibujar(soltar){
   const app=$('app');
-  if(!S.logueado){app.innerHTML=vLogin();$('modal-ev').innerHTML='';S.evAbierto=null;return}
+  if(!S.logueado){app.innerHTML=vLogin();$('modal-ev').innerHTML='';S.evAbierto=null;S.copyAbierto=null;return}
   const a=document.activeElement;let keep=null;
   // Sin blur: soltar el foco dispararía otro "change" con el texto viejo.
   if(!soltar&&a&&a.id&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))keep={id:a.id,val:a.value,s:a.selectionStart,e:a.selectionEnd};
@@ -275,8 +275,9 @@ function dibujar(soltar){
   const V={hoy:vHoy,semana:vSemana,historial:vHistorial,calendario:()=>S.calVista==='mes'?vMes():vCalendario(),tareas:vTareas,ads:vAds,metricas:vMetricas,ideas:vIdeas,competencia:vCompetencia,saber:vSaber,preguntar:vPreguntar,bandeja:vBandeja,contactos:vContactos}[S.vista]||vHoy;
   $('vista').innerHTML=V();
   // La animación de entrada sólo la primera vez: cada guardado redibuja el detalle.
-  const recien=S.evAbierto&&S.evAbierto!==modalPrevio;modalPrevio=S.evAbierto;
-  $('modal-ev').innerHTML=S.evAbierto?vEvento(recien):'';
+  const abierto=S.evAbierto||(S.copyAbierto&&'copy:'+S.copyAbierto)||null;
+  const recien=abierto&&abierto!==modalPrevio;modalPrevio=abierto;
+  $('modal-ev').innerHTML=S.evAbierto?vEvento(recien):S.copyAbierto?vCopy(recien):'';
   document.querySelectorAll('[data-md]').forEach(el=>{try{el.innerHTML=DOMPurify.sanitize(marked.parse(el.textContent))}catch(e){}el.removeAttribute('data-md')});
   if(keep){const el=$(keep.id);if(el){if(el.tagName!=='SELECT')el.value=keep.val;el.focus();try{el.setSelectionRange(keep.s,keep.e)}catch(e){}}}
 }
@@ -417,17 +418,31 @@ function vEvento(recien){
   </div></div>`;
 }
 
+// El copy sugerido de un posteo: así lo que arma Franco (o la IA) queda en el día y no
+// se pierde en WhatsApp. Se guarda como el resto del posteo, con aviso si el otro lo cambió.
+function vCopy(recien){
+  const f=S.copyAbierto;const p=posteo(f);if(!p){S.copyAbierto=null;return ''}
+  const d=parse(f);const quien=p.copyPor&&PERSONAS[p.copyPor];
+  return `<div class="modal ${recien?'entra':''}" data-cerrar-ev><div class="ev-sheet" role="dialog" aria-modal="true" aria-labelledby="cp-tit" data-fecha="${f}">
+    <div class="card-h"><span class="label">${DIAS_L[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}</span><button class="iconbtn" data-cerrar-ev aria-label="Cerrar">×</button></div>
+    <div class="row" style="gap:10px"><h2 id="cp-tit" style="margin:0">Copy</h2>${marcaChip(p.marca)}</div>
+    <p class="small muted" style="margin:0">${p.tema?esc(p.tema):'Este día todavía no tiene tema.'}</p>
+    <textarea class="f cp-txt" id="copy-${f}" data-pf="copy" rows="12" placeholder="Pegá acá el texto del posteo: el copy, los hashtags, las bases del sorteo…" aria-label="Copy">${esc(p.copy)}</textarea>
+    <div class="row between"><span class="small muted">${quien?'Último cambio: '+esc(quien):'Se guarda solo al salir del campo.'}</span><button class="btn sm primary" data-copiar="${f}">Copiar texto</button></div>
+  </div></div>`;
+}
+
 /* ===== HISTORIAL Y PAPELERA (sólo Lautaro) =====
    Nada se borra de verdad: va a la papelera 30 días y se recupera desde acá.
    El historial muestra quién cambió qué (Lautaro, Franco, el bot o la IA). */
 const TIPO_NOMBRE={tarea:'Tarea',posteo:'Publicación',contacto:'Contacto',idea:'Idea',nota:'Nota',saber:'Documento',obs:'Observación',ugc:'Reel UGC',campana:'Campaña',metrica:'Métrica',diario:'Revisión diaria',evento:'Evento',paso:'Tarea compartida'};
 const QUIEN_NOMBRE={lautaro:'Lautaro',franco:'Franco',bot:'Bot de Telegram',IA:'Claude',sistema:'Sistema'};
 const ACCION={crear:'cargó',editar:'cambió',borrar:'borró',restaurar:'recuperó'};
-const CAMPO={tema:'tema',estado:'estado',eje:'eje',link:'link',redes:'redes',texto:'texto',titulo:'título',fecha:'fecha',quien:'responsable',hecho:'hecha',marca:'marca',lugar:'lugar',descripcion:'detalle',seguidores:'seguidores',nombre:'nombre',telefono:'teléfono',nota:'nota',gasto:'gasto',consultas:'consultas'};
+const CAMPO={tema:'tema',copy:'copy',estado:'estado',eje:'eje',link:'link',redes:'redes',texto:'texto',titulo:'título',fecha:'fecha',quien:'responsable',hecho:'hecha',marca:'marca',lugar:'lugar',descripcion:'detalle',seguidores:'seguidores',nombre:'nombre',telefono:'teléfono',nota:'nota',gasto:'gasto',consultas:'consultas'};
 function nombreDe(tipo,d){d=d||{};const t=d.titulo||d.texto||d.tema||d.nombre||d.competidor;
   if(tipo==='posteo')return `${corta(d.fecha||d.clave)}${t?': '+t:''}`;if(tipo==='metrica')return `${d.cuenta||''} ${d.fecha||''}`.trim();return t||d.clave||''}
 const corto_=v=>{if(v==null||v==='')return '—';if(typeof v==='boolean')return v?'sí':'no';if(typeof v==='object')return Object.entries(v).filter(([,x])=>x).map(([k])=>RED_TXT[k]||k).join(', ')||'—';const s=String(v);return s.length>60?s.slice(0,57)+'…':s};
-const IGNORAR=new Set(['editadoPor','marca','aCargo','fecha','clave','hechoEn','hechoPor','autor']);
+const IGNORAR=new Set(['editadoPor','copyPor','marca','aCargo','fecha','clave','hechoEn','hechoPor','autor']);
 async function cargarHist(){S.busy.hist=true;try{S.hist=await api('GET','/api/historial')}catch(e){S.hist={error:e.message}}S.busy.hist=false;if(S.vista==='historial')render()}
 function cuandoFue(m){const d=new Date(m);const h=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});const f=iso(d);return f===hoyISO()?`hoy ${h}`:f===iso(addDays(new Date(),-1))?`ayer ${h}`:`${corta(f)} ${h}`}
 function vHistorial(){
@@ -456,6 +471,7 @@ function vCalendario(){
       <div class="seg ejes" role="group" aria-label="Eje">${Object.entries(S.meta.ejes).map(([k,t])=>`<button data-eje="${k}" class="${p.eje===k?'on':''}" aria-pressed="${p.eje===k}">${t}</button>`).join('')}</div>
       <textarea class="f" id="tema-${f}" data-pf="tema" rows="2" placeholder="Qué se publica" aria-label="Tema">${esc(p.tema)}</textarea>
       <input class="f" id="link-${f}" data-pf="link" value="${esc(p.link)}" placeholder="Link de la pieza o del Drive" aria-label="Link" style="font-size:12.5px">
+      <button class="copybtn ${p.copy?'tiene':''}" data-copy="${f}">${p.copy?`<b>Copy</b><span>${esc(p.copy.trim().split('\n')[0])}</span>`:'<span>+ Agregar copy</span>'}</button>
       <div class="seg est" role="group" aria-label="Estado">${ESTADOS_POST.map(([k,t])=>`<button data-est="${k}" class="${p.estado===k?'on':''}" aria-pressed="${p.estado===k}">${t}</button>`).join('')}</div>
       <div class="redes"><span class="small muted">Salió en</span>${redes.map(r=>`<button data-red="${r}" aria-pressed="${!!p.redes?.[r]}">${RED_TXT[r]}</button>`).join('')}</div>
     </article>`}).join('');
@@ -728,6 +744,8 @@ document.addEventListener('click',async e=>{
   const t=e.target.closest('button,[data-vista]');if(!t)return;
   if(t.classList.contains('aviso-x')){cerrarAviso(t.closest('.aviso-w'));return}
   if(t.dataset.ev){S.evAbierto=t.dataset.ev;S.armed=null;return render()}
+  if(t.dataset.copy){S.copyAbierto=t.dataset.copy;render();$('copy-'+t.dataset.copy)?.focus();return}
+  if(t.dataset.copiar){const v=($('copy-'+t.dataset.copiar)?.value||'').trim();if(!v){aviso('error','Todavía no hay copy para copiar');return}try{await navigator.clipboard.writeText(v);aviso('ok','Copy copiado: ya lo podés pegar')}catch(err){aviso('error','No se pudo copiar: seleccioná el texto a mano')}return}
   if(t.id==='hist-recargar'){S.hist=null;return render()}
   if(t.dataset.restaurar){const el=aviso('guardando','Recuperando…');
     try{const r=await api('POST','/api/historial',{restaurar:t.dataset.restaurar});resolverAviso(el,'ok',`Recuperado: ${nombreDe(r.tipo,r)||TIPO_NOMBRE[r.tipo]}`);S.hist=null;await cargar()}
@@ -797,7 +815,8 @@ document.addEventListener('change',async e=>{
   if(el.matches('[data-pq]')){const id=el.closest('[data-pid]').dataset.pid;return cambiar(id,{quien:el.value})}
   if(el.dataset.evf){const e=buscar(S.evAbierto);if(!e)return;const v=el.value.trim();if(el.dataset.evf!=='lugar'&&!v)return;await cambiar(e.id,{[el.dataset.evf]:v});if(el.dataset.evf==='fecha'||el.dataset.evf==='titulo')cargar().catch(()=>{});return}
   if(el.dataset.pf){const f=el.closest('[data-fecha]').dataset.fecha;const p=posteo(f);const v=el.value.trim();if(v===(p[el.dataset.pf]??''))return;
-    return porClave('posteo',f,{marca:p.marca,aCargo:p.aCargo,fecha:f,[el.dataset.pf]:v},vistoAntes('posteo',f,[el.dataset.pf]))}
+    const c={marca:p.marca,aCargo:p.aCargo,fecha:f,[el.dataset.pf]:v};if(el.dataset.pf==='copy')c.copyPor=S.rol;
+    return porClave('posteo',f,c,vistoAntes('posteo',f,[el.dataset.pf]))}
   if(el.dataset.uf){const s=el.closest('[data-ugc]');return porClave('ugc',s.dataset.ugc,{mes:s.dataset.ugc.slice(0,7),quien:s.dataset.quien,marca:s.dataset.marca,[el.dataset.uf]:el.value.trim()})}
   if(el.dataset.act==='check'){const id=el.closest('.item').dataset.id;return cambiar(id,el.checked?{estado:'hecho',hechoEn:new Date().toISOString()}:{estado:'pendiente',hechoEn:null})}
   if(el.dataset.act==='texto'){const id=el.closest('.item').dataset.id;const v=el.value.trim();if(v&&v!==buscar(id)?.texto)cambiar(id,{texto:v});return}
@@ -809,10 +828,10 @@ document.addEventListener('change',async e=>{
 });
 // Al cerrar el detalle se saca el foco primero: así el campo que se estaba
 // editando dispara su "change" y se guarda antes de desaparecer.
-function cerrarEvento(){document.activeElement?.blur?.();S.evAbierto=null;render()}
+function cerrarEvento(){document.activeElement?.blur?.();S.evAbierto=null;S.copyAbierto=null;render()}
 document.addEventListener('mousedown',e=>{if(e.target.matches?.('#modal-ev .modal'))cerrarEvento()});
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&S.evAbierto){cerrarEvento();return}
+  if(e.key==='Escape'&&(S.evAbierto||S.copyAbierto)){cerrarEvento();return}
   if(e.key==='Enter'&&e.target.matches('textarea.txt')){e.preventDefault();e.target.blur()}
   if(e.key==='Enter'&&e.target.closest('tr.nuevo')){e.preventDefault();$('nc-add').click()}
 });

@@ -37,7 +37,8 @@ Para cerrar **todas** las sesiones abiertas: cambiar `PANEL_SECRET`.
   sólo el chat de Lautaro), `cron` (lunes, martes, diario mar-vie, viernes).
 - `lib/db.mjs`: Neon. Tabla `registros` (tipo + jsonb), `cambios` (historial con
   quién), `ingresos` (intentos de PIN). Nada se borra: `borrado` = papelera.
-- Tipos: `posteo` (un día del calendario), `evento`, `paso` (tarea compartida con
+- Tipos: `posteo` (un día del calendario; desde el 6-oct tiene `copy` + `copyPor`, el
+  texto sugerido que arma Franco, editable en un detalle con botón «Copiar texto»), `evento`, `paso` (tarea compartida con
   responsable), `idea` (con `autor`), y lo privado de Lautaro (`tarea`, `campana`,
   `metrica`, `nota`, `contacto`, `saber`, `obs`, `ugc`, `diario`).
 
