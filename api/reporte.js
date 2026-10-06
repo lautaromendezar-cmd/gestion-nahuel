@@ -7,7 +7,7 @@ import { parseISO, lunesDe, hoyAR, sumarDias } from '../lib/fechas.mjs';
 import { sinSesion, fallo } from '../lib/http.mjs';
 
 export default async function handler(req, res) {
-  if (sinSesion(req, res)) return;
+  if (sinSesion(req, res, { solo: 'lautaro' })) return;
   try {
     const regs = await listar(TIPOS);
     const base = /^\d{4}-\d{2}-\d{2}$/.test(req.query.lunes || '') ? parseISO(req.query.lunes) : lunesDe(hoyAR());

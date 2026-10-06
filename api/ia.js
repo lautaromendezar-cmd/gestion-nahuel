@@ -9,7 +9,7 @@ import { fechasEntre } from '../lib/fechas-importantes.mjs';
 export const config = { maxDuration: 300 };
 
 export default async function handler(req, res) {
-  if (sinSesion(req, res)) return;
+  if (sinSesion(req, res, { solo: 'lautaro' })) return;
   if (req.method !== 'POST') return res.status(405).json({ error: 'método no permitido' });
   if (!iaDisponible()) return res.status(503).json({ error: 'Falta la clave de la API de Claude (ANTHROPIC_API_KEY) en Vercel.' });
   const b = cuerpo(req);

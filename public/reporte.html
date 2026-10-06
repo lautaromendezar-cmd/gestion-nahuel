@@ -11,8 +11,8 @@
 <style>
 /* Layout: hoja A4 centrada sobre gris; una barra de herramientas arriba que no se imprime */
 :root{
-  --ink:#142019; --ink2:#3A4A40; --muted:#6A786F; --line:#E3E9E3; --soft:#F4F6F3;
-  --accent:#1E6B3A; --deep:#0F2418; --gold:#E9BE00;
+  --ink:#141416; --ink2:#3A3B40; --muted:#6B6D74; --line:#E4E4E7; --soft:#F3F3F4;
+  --accent:#141416; --deep:#0B0B0C; --gold:#E9BE00;
   --cente:#6B5600; --cente-bg:#FFF4C2; --latina:#0C5223; --latina-bg:#DDEFE2; --azul:#0B2F63; --azul-bg:#E1E9F5;
   --ok:#1F7A3A; --ok-bg:#E1F2E6; --wait:#A8460F; --wait-bg:#FDEBDD; --bad:#B42318;
   --font:"Montserrat",system-ui,sans-serif; color-scheme:light;
@@ -20,23 +20,23 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0}
-body{background:#DDE2DD;color:var(--ink);font:10pt/1.5 var(--font);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{background:#DCDCDF;color:var(--ink);font:10pt/1.5 var(--font);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .tools{position:sticky;top:0;z-index:5;background:var(--deep);color:#fff;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;padding:10px 16px}
 .tools button,.tools a{font:600 13px var(--font);border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:8px;padding:7px 13px;cursor:pointer;text-decoration:none}
 .tools button.on{background:#fff;color:var(--deep)}
 .tools .pdf{background:var(--gold);border-color:var(--gold);color:var(--deep)}
 .tools .per{font:700 13px var(--font);min-width:15em;text-align:center}
 .hoja{width:210mm;min-height:297mm;margin:18px auto 40px;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.15);display:flex;flex-direction:column}
-.cab{background:linear-gradient(120deg,#0F2418 0%,#1E6B3A 70%,#2F8A4E 100%);color:#fff;padding:14mm 14mm 11mm;display:grid;gap:8mm}
+.cab{background:linear-gradient(120deg,#0B0B0C 0%,#1C1C1F 70%,#2C2D31 100%);color:#fff;padding:14mm 14mm 11mm;display:grid;gap:8mm}
 .cab .top{display:flex;justify-content:space-between;align-items:center}
 .cab .mk{display:flex;gap:10px;align-items:center;font-weight:700;font-size:10pt}
-.cab .mk i{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#2F8A4E,#E9BE00);display:grid;place-items:center;font-style:normal;font-weight:800;color:#0F2418;font-size:11pt}
-.cab .lbl{font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#BFE3CB;font-weight:600}
+.cab .mk img{height:34px;width:auto;display:block}
+.cab .lbl{font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:#A9ABB1;font-weight:600}
 .cab h1{margin:3mm 0 0;font-size:25pt;font-weight:800;letter-spacing:-.03em;line-height:1.05}
-.cab .per{font-size:12pt;color:#E4F3E8;margin-top:2mm;font-weight:500}
+.cab .per{font-size:12pt;color:#E4E4E7;margin-top:2mm;font-weight:500}
 .cuerpo{padding:9mm 14mm 10mm;display:grid;gap:8mm;flex:1;align-content:start}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm;margin-top:-17mm}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:4mm;box-shadow:0 4px 14px rgba(16,40,24,.08)}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:4mm;box-shadow:0 4px 14px rgba(0,0,0,.08)}
 .kpi .l{font-size:7.5pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .kpi .v{font-size:19pt;font-weight:800;letter-spacing:-.03em;margin-top:1mm;font-variant-numeric:tabular-nums}
 .kpi .v small{font-size:10pt;color:var(--muted);font-weight:600}
@@ -108,7 +108,7 @@ const q=new URLSearchParams(location.search);
 let rango=q.get('rango')==='mes'?'mes':'semana';
 let base=q.get('lunes')?parse(q.get('lunes')):lunes(new Date());
 
-function spark(v){if(v.length<2)return'';const mn=Math.min(...v),mx=Math.max(...v),r=mx-mn||1;const p=v.map((x,i)=>`${(i/(v.length-1)*96+2).toFixed(1)},${(26-((x-mn)/r)*22).toFixed(1)}`).join(' ');return `<svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline points="${p}" fill="none" stroke="#1E6B3A" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`}
+function spark(v){if(v.length<2)return'';const mn=Math.min(...v),mx=Math.max(...v),r=mx-mn||1;const p=v.map((x,i)=>`${(i/(v.length-1)*96+2).toFixed(1)},${(26-((x-mn)/r)*22).toFixed(1)}`).join(' ');return `<svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><polyline points="${p}" fill="none" stroke="#141416" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`}
 function barras(items){
   const W=600,H=150,L=34,T=14,B=26;const mx=Math.max(...items.map(i=>i.v),1);const step=(W-L)/items.length;const bw=Math.min(46,step-16);
   const Y=v=>T+(1-v/mx)*(H-T-B);
@@ -144,7 +144,7 @@ function pintar(d){
   const lista=g=>g.length?'<div style="display:grid;gap:1.5mm">'+g.map(x=>`<div class="grp">${esc(x.frente)}</div><ul class="lista">${x.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`).join('')+'</div>':'<p class="vacio">Nada en este período.</p>';
   const ugc=d.ugc.length?`<ul class="lista">${d.ugc.map(u=>`<li><span><b>${esc(u.quien)}</b> · ${esc(d.marcas[u.marca]||u.marca)}: ${esc(u.titulo||'reel')} <span class="e ${u.estado==='publicado'?'publicado':''}">${esc(u.estado)}</span></span></li>`).join('')}</ul>`:'<p class="vacio">Sin reels cargados todavía.</p>';
   $('hoja').innerHTML=`
-  <header class="cab"><div class="top"><div class="mk"><i>GN</i>LaTiNa · Centenaria</div><span class="lbl">Reporte ${d.tipo==='mes'?'mensual':'semanal'}</span></div>
+  <header class="cab"><div class="top"><div class="mk"><img src="/img/logo-latina.png" alt="LaTiNa"><img src="/img/logo-centenaria.png" alt="Centenaria">Redes Latina | Centenaria</div><span class="lbl">Reporte ${d.tipo==='mes'?'mensual':'semanal'}</span></div>
     <div><span class="lbl">Gestión de redes, contenido y publicidad</span><h1>Reporte de gestión</h1><div class="per">${esc(d.titulo.charAt(0).toUpperCase()+d.titulo.slice(1))}</div></div><div style="height:4mm"></div></header>
   <div class="cuerpo">
     <div class="kpis">

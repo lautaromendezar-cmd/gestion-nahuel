@@ -1,4 +1,5 @@
-// Login del panel con PIN. Un solo usuario: Lautaro.
+// Login del panel con PIN. Dos usuarios: Lautaro (PANEL_PASSWORD) y Franco
+// (FRANCO_PASSWORD, sólo publicaciones y calendario).
 
 import { verificarPassword, crearSesion, cabeceraCookie, hayPanelProtegido } from '../lib/sesion.mjs';
 import { cuerpo } from '../lib/http.mjs';
@@ -20,11 +21,14 @@ export default async function handler(req, res) {
   if (previos > 0) await new Promise((r) => setTimeout(r, Math.min(previos * 1500, 12000)));
 
   const { pin = '' } = cuerpo(req);
-  if (!verificarPassword(String(pin), process.env.PANEL_PASSWORD)) {
+  const rol = verificarPassword(String(pin), process.env.PANEL_PASSWORD) ? 'lautaro'
+    : verificarPassword(String(pin), process.env.FRANCO_PASSWORD) ? 'franco'
+    : null;
+  if (!rol) {
     fallos.set(ip, previos + 1);
     return res.status(401).json({ error: 'PIN incorrecto' });
   }
   fallos.delete(ip);
-  res.setHeader('set-cookie', cabeceraCookie(crearSesion(process.env.PANEL_SECRET)));
-  return res.status(200).json({ ok: true });
+  res.setHeader('set-cookie', cabeceraCookie(crearSesion(process.env.PANEL_SECRET, rol)));
+  return res.status(200).json({ ok: true, rol });
 }

@@ -1,7 +1,10 @@
 // CRUD de registros. GET trae todo (el volumen es chico y así la web
 // funciona entera con una sola lectura).
+//
+// Franco sólo ve y toca posteos y eventos: el filtro va acá, no en la web,
+// para que con su sesión no se pueda leer ni escribir el resto.
 
-import { TIPOS, listar, crear, actualizar, borrar, guardarPorClave } from '../lib/db.mjs';
+import { TIPOS, listar, obtener, crear, actualizar, borrar, guardarClave } from '../lib/db.mjs';
 import { FRENTES, MARCAS, CALENDARIO, REDES, EJES, UGC_MES, CUENTAS_RED, CUENTAS_COMPETENCIA, ESTADOS_CONTACTO } from '../lib/reporte.mjs';
 import { iaDisponible } from '../lib/ia.mjs';
 import { fechasEntre } from '../lib/fechas-importantes.mjs';
@@ -9,32 +12,50 @@ import { hoyAR, sumarDias, iso } from '../lib/fechas.mjs';
 import { cuerpo, sinSesion, fallo } from '../lib/http.mjs';
 
 const UUID = /^[0-9a-f-]{36}$/i;
+const TIPOS_FRANCO = ['posteo', 'evento'];
+const tiposDe = (rol) => (rol === 'franco' ? TIPOS_FRANCO : TIPOS);
 
 export default async function handler(req, res) {
   if (sinSesion(req, res)) return;
   res.setHeader('cache-control', 'no-store');
+  const tipos = tiposDe(req.rol);
+  const prohibido = () => res.status(403).json({ error: 'Esta parte no está habilitada para tu usuario' });
   try {
     if (req.method === 'GET') {
-      const registros = await listar(TIPOS);
+      const registros = await listar(tipos);
       const hoy = hoyAR();
       const fechas = await fechasEntre(iso(sumarDias(hoy, -14)), iso(sumarDias(hoy, 150)), registros);
-      return res.status(200).json({ registros, meta: { frentes: FRENTES, marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: UGC_MES, cuentasRed: CUENTAS_RED, cuentasCompetencia: CUENTAS_COMPETENCIA, estadosContacto: ESTADOS_CONTACTO, fechas }, ia: iaDisponible() });
+      const meta = req.rol === 'franco'
+        ? { frentes: [], marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: [], cuentasRed: [], cuentasCompetencia: [], estadosContacto: {}, fechas }
+        : { frentes: FRENTES, marcas: MARCAS, calendario: CALENDARIO, redes: REDES, ejes: EJES, ugcMes: UGC_MES, cuentasRed: CUENTAS_RED, cuentasCompetencia: CUENTAS_COMPETENCIA, estadosContacto: ESTADOS_CONTACTO, fechas };
+      return res.status(200).json({ registros, meta, ia: req.rol === 'lautaro' && iaDisponible(), rol: req.rol });
     }
     const b = cuerpo(req);
     if (req.method === 'POST') {
       if (!TIPOS.includes(b.tipo) || typeof b.datos !== 'object') return res.status(400).json({ error: 'tipo o datos inválidos' });
-      if (b.clave) return res.status(200).json(await guardarPorClave(b.tipo, 'clave', String(b.clave), b.datos));
-      return res.status(200).json(await crear(b.tipo, b.datos));
+      if (!tipos.includes(b.tipo)) return prohibido();
+      const datos = { ...b.datos, editadoPor: req.rol };
+      if (b.clave) {
+        const r = await guardarClave(b.tipo, String(b.clave), datos, typeof b.antes === 'object' ? b.antes : {});
+        if (r.conflicto) return res.status(409).json({ error: 'Otra persona cambió esto recién', conflicto: true, actual: r.actual });
+        return res.status(200).json(r.registro);
+      }
+      return res.status(200).json(await crear(b.tipo, datos));
     }
-    if (req.method === 'PATCH') {
-      if (!UUID.test(b.id || '') || typeof b.cambios !== 'object') return res.status(400).json({ error: 'id o cambios inválidos' });
-      const r = await actualizar(b.id, b.cambios);
-      return r ? res.status(200).json(r) : res.status(404).json({ error: 'No existe' });
-    }
-    if (req.method === 'DELETE') {
+    if (req.method === 'PATCH' || req.method === 'DELETE') {
       if (!UUID.test(b.id || '')) return res.status(400).json({ error: 'id inválido' });
-      await borrar(b.id);
-      return res.status(200).json({ ok: true });
+      if (req.rol !== 'lautaro') {
+        const previo = await obtener(b.id);
+        if (!previo) return res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
+        if (!tipos.includes(previo.tipo)) return prohibido();
+      }
+      if (req.method === 'DELETE') {
+        if (!(await borrar(b.id))) return res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
+        return res.status(200).json({ ok: true });
+      }
+      if (typeof b.cambios !== 'object') return res.status(400).json({ error: 'cambios inválidos' });
+      const r = await actualizar(b.id, { ...b.cambios, editadoPor: req.rol });
+      return r ? res.status(200).json(r) : res.status(404).json({ error: 'Ya no existe: lo borró otra persona' });
     }
     return res.status(405).json({ error: 'método no permitido' });
   } catch (e) {
